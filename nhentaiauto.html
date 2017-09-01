@@ -21,10 +21,10 @@
 				l="https://i.nhentai.net/galleries/"+id+"/"+p+"."+typ
 				g=new Image(),n="",img=doc.createElement("img");
 				img.id="Page"+p;img.width=doc.body.clientWidth*0.9;
-				doc.body.append(img);
+				doc.body.appendChild(img);
 				g.onload=function(){
 					a.href=l;a.download=true;Id("Page"+p).src=l
-					document.body.append(a);a.style.display="none";
+					document.body.appendChild(a);a.style.display="none";
 					if(location.hash)a.click();
 				};
 				g.onerror=function(){
