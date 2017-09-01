@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width = device-width,initial-scale = 1.0,maximum-scale = 1.0,user-scalable = 0" />
+		<title>nhentaiauto</title>
+		<style>body{text-align:center}</style>
+	</head>
+	<body>
+		輸入第一張圖的網址:<input type="text" id="url"/>
+		輸入下載區間:<input type="text" id="start" value="1">到<input type="text" id="end">
+		<input type="button" value="執行" onclick="prc()"/>
+	</body>
+	<script>
+		var doc=document,Id=function(r){return doc.getElementById(r)}
+		function prc(){
+			var id=Id("url").value.replace("i.nhentai.net/galleries/","").replace("https://","").replace("/1","").split("."),typ=id[1];id=id[0]
+			for(var i=Id("start").value*1;i<Id("end").value*1+1;i++)ldr(id,i,typ);
+		}
+		function ldr(id,p,typ){
+			var a=doc.createElement("a"),
+				l="https://i.nhentai.net/galleries/"+id+"/"+p+"."+typ
+				g=new Image(),n="",img=doc.createElement("img");
+				img.id="Page"+p;img.width=doc.body.clientWidth*0.9;
+				doc.body.append(img);
+				g.onload=function(){
+					a.href=l;a.download=true;Id("Page"+p).src=l
+					document.body.append(a);a.style.display="none";
+					if(location.hash)a.click();
+				};
+				g.onerror=function(){
+					if(n.length==2)return;n+=typ[0];
+					l=l.replace(typ,(typ=="jpg")?"png":"jpg");g.src=l
+				};g.src=l
+		}
+	</script>
+</html>
