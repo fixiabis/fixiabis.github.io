@@ -1,0 +1,257 @@
+<html>
+
+<head>
+	<style>
+		body {
+			margin: 0px;
+			cursor: default;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			background: #eee;
+		}
+
+		#cbg,
+		canvas {
+			width: 600;
+			height: 400;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			transition: all 1s;
+		}
+
+		#cbg {
+			background: url(opacity.png);
+			z-index: 0
+		}
+
+		canvas {
+			z-index: 1;
+		}
+
+		#ctl {
+			width: 240px;
+			height: 100%;
+			position: fixed;
+			top: 0px;
+			right: 0px;
+			background: #bbb;
+			opacity: 0.6;
+			transition: all 1s;
+		}
+
+		#ctl:hover {
+			opacity: 1;
+		}
+
+		#ctl div {
+			height: 40px;
+			width: 100%;
+			border-bottom: 1px solid #333;
+			color: #333;
+			font-family: Consolas;
+			line-height: 40px;
+			text-align: center;
+			cursor: pointer;
+			transition: all 1s;
+			font-size: 18px;
+		}
+
+		#ctl div input[type=text] {
+			color: #bbb;
+			background-color: #333;
+			height: 35px;
+			text-align: center;
+			border-radius: 5px;
+			border: none;
+			width: 50%;
+			font-family: inherit;
+			font-size: inherit;
+			margin-top: 2.5px;
+		}
+
+		#ctl div div {
+			width: 50%;
+			float: left;
+			color: inherit;
+			background-color: inherit;
+		}
+	</style>
+</head>
+
+<body>
+	<div style="width:calc(100% - 240px);height:100%;overflow:auto;position:relative;top:0px;left:0px;">
+		<div id="cbg"></div>
+		<canvas id="canvas"></canvas>
+	</div>
+	<div id="ctl">
+		<div>
+			<div>Name</div>
+			<input type="text" placeholder="NoName" id="NN" value="NoName" title="enter to rename" />
+		</div>
+		<div>
+			<div>Background</div>
+			<input type="text" placeholder="ChangeColor" onchange="Background()" id="BG" value="None" title="enter to change background"
+			/>
+		</div>
+		<div>
+			<div>BrushColor</div>
+			<input type="text" placeholder="ChangeColor" onchange="BrushColor()" id="BR" value="Black" title="enter to change brushcolor"
+			/>
+		</div>
+		<div>
+			<div>LineWidth</div>
+			<input type="text" placeholder="ChangeWidth" onchange="LineWidth()" id="LW" value="1" title="enter to change linewidth" />
+		</div>
+		<div style="height:80px;">
+			<div style="width:100%">CanvasSize(W,H)</div>
+			<input type="text" placeholder="ChangeWidth" id="CW" value="600" title="enter to change width" style="width:49%;float:left"
+			 onchange="CanvasSize()" />
+			<input type="text" placeholder="ChangeHeigth" id="CH" value="400" title="enter to change height" style="width:49%;float:right"
+			 onchange="CanvasSize()" />
+		</div>
+		<div>
+			<div onclick="Undo()" style="border-right:solid 1px #333;width:calc(50% - 2px);">Undo</div>
+			<div onclick="Redo()">Redo</div>
+		</div>
+		<div>
+			<div onclick="FF.click()" style="border-right:solid 1px #333;width:calc(50% - 2px);">
+				<input type="file" style="display:none" onchange="Open(this.files[0])" id="FF" />Open
+			</div>
+			<div onclick="Save()">Save</div>
+		</div>
+	</div>
+	<script>
+		var brush = "#000",
+			lineW = 1,
+			cbg = document.getElementById("cbg"),
+			canvas = document.getElementById("canvas"),
+			BR = document.getElementById("BR"),
+			BG = document.getElementById("BG"),
+			LW = document.getElementById("LW"),
+			NN = document.getElementById("NN"),
+			CW = document.getElementById("CW"),
+			CH = document.getElementById("CH"),
+			FF = document.getElementById("FF"),
+			drawing = false,
+			ctx = canvas.getContext("2d"),
+			size = [],
+			timeline = [],
+			count = 0;
+		document.body.onload = function () {
+			size = location.search.replace("?", "").replace("size=", "").split("x");
+			if (size.length == 1) size = [600, 400]; Resize();
+		}
+		document.body.onmouseup = NotDraw;
+		document.body.onkeydown = function (e) {
+			switch (e.which) {
+				case 79: e.preventDefault(); FF.click(); break;
+				case 83: e.preventDefault(); Save(); break;
+				case 89: if (e.ctrlKey) Redo(); break;
+				case 90: if (e.ctrlKey) Undo(); break
+			}
+		}
+		canvas.onmousedown = function (e) {
+			drawing = true; count++;
+			ctx.moveTo(e.pageX, e.pageY)
+		}
+		canvas.onmouseout = NotDraw;
+		canvas.onmousemove = function (e) {
+			if (drawing) {
+				ctx.lineTo(e.pageX, e.pageY);
+				ctx.stroke();
+			}
+		}
+		document.body.ondrop = function (e) {
+			e.preventDefault();
+			var data = e.dataTransfer.items[0];
+			console.log(data)
+			if (data.kind == "file") Open(data.getAsFile());
+		}
+		document.body.ondragover = function (e) { e.preventDefault() }
+		function NotDraw() {
+			drawing = false;
+			Record();
+			ctx.beginPath();
+		}
+		function Record() {
+			timeline[count] = canvas.toDataURL();
+		}
+		function Undo() {
+			if (timeline[count - 1]) Goto(count - 1)
+		}
+		function Redo() {
+			if (timeline[count + 1]) Goto(count + 1)
+		}
+		function Goto(v) {
+			var m = new Image();
+			m.src = timeline[v];
+			m.onload = function () {
+				size = [m.width, m.height];
+				Resize();
+				ctx.clearRect(0, 0, size[0], size[1]);
+				ctx.beginPath();
+				ctx.drawImage(m, 0, 0);
+				count = v;
+			}
+		}
+		function Alert(msg) {
+			var af = document.createElement("div")
+			af.style.position = "fixed";
+			af.style.zIndex = 5;
+			af.innerHTML = "msg";
+			af.style.height = "50px";
+		}
+		function Save() {
+			var a = document.createElement("a")
+			a.href = timeline[timeline.length - 1];
+			if (NN.value) a.download = NN.value;
+			document.body.append(a);
+			a.click(); document.body.removeChild(a);
+		}
+		function Open(file) {
+			var FR = new FileReader();
+			NN.value = file.name;
+			FR.readAsDataURL(file);
+			FR.onload = function () {
+				timeline = [FR.result];
+				Goto(0);
+			}
+		}
+		function Resize() {
+			canvas.width = size[0];
+			canvas.height = size[1];
+			canvas.style.width = size[0] + "px";
+			canvas.style.height = size[1] + "px";
+			cbg.style.width = size[0] + "px";
+			cbg.style.height = size[1] + "px";
+			CW.value = size[0]; CH.value = size[1];
+		}
+		function Background() {
+			if (BG.value == "None" || BG.value == "") {
+				ctx.clearRect(0, 0, size[0], size[1])
+			} else {
+				ctx.fillStyle = BG.value;
+				ctx.fillRect(0, 0, size[0], size[1]);
+			} BG.blur()
+		}
+		function BrushColor() {
+			if (BR.value == "None" || BR.value == "") {
+				ctx.globalCompositeOperation = "destination-out";
+			} else {
+				ctx.globalCompositeOperation = "source-over";
+				ctx.strokeStyle = BR.value;
+			} BR.blur()
+		}
+		function LineWidth() {
+			if (LW.value > 0) ctx.lineWidth = LW.value; LW.blur()
+		}
+		function CanvasSize() {
+			size = [CW.value, CH.value]; Resize(); CW.blur(); CH.blur();
+		}
+		Record();
+	</script>
+</body>
+
+</html>
