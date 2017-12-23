@@ -14,8 +14,8 @@ function tree1rv(result, nodes) {
 			minRelateMinNodeRelateNode = result[0],
 			minRelateMinNodeRelateNodeIndex = nodes.indexOf(minRelateMinNodeRelateNode);
 		if (log != "") log += "\n";
-		log += "未於結果:" + notInResult.join(",");
-		log += "\n結果:" + result.join(",");
+		log += "未於結果:" + notInResult.join("");
+		log += "\n結果:" + result.join("");
 		log += " 取得" + minRelateMinNodeRelateNode + "與" + minRelateMinNode + "關聯";
 		relate[minRelateMinNodeIndex].push(minRelateMinNodeRelateNode);
 		relate[minRelateMinNodeRelateNodeIndex].push(minRelateMinNode);
@@ -31,8 +31,8 @@ function tree1rv(result, nodes) {
 		minRelateMinNodeRelateNode = notInResult.sort()[1],
 		minRelateMinNodeRelateNodeIndex = nodes.indexOf(minRelateMinNodeRelateNode);
 	if (log != "") log += "\n";
-	log += "未關聯:" + notInResult.join(",");
-	log += "\n結果:" + result.join(",");
+	log += "未關聯:" + notInResult.join("");
+	log += "\n結果:" + result.join("");
 	log += " 取得" + minRelateMinNodeRelateNode + "與" + minRelateMinNode + "關聯";
 	relate[minRelateMinNodeIndex].push(minRelateMinNodeRelateNode);
 	relate[minRelateMinNodeRelateNodeIndex].push(minRelateMinNode);

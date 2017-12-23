@@ -11,7 +11,7 @@ function tree1(nodes, relate) {
 			minRelateMinNodeIndex = nodes.indexOf(minRelateMinNode);
 		result += relate[minRelateMinNodeIndex][0];
 		if (log != "") log += "\n";
-		log += "最小關聯:" + minRelateNodes.sort().join(",");
+		log += "最小關聯:" + minRelateNodes.sort().join("");
 		log += " 刪除:" + minRelateMinNode;
 		log += "\n目前答案:" + result;
 		nodes.splice(minRelateMinNodeIndex, 1);
