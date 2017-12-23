@@ -18,5 +18,8 @@ function tree1(nodes, relate) {
 			relate[i] = relate[i].filter((value) => value != minRelateMinNode);
 		relate.splice(minRelateMinNodeIndex, 1);
 	}
-	return log;
+	return {
+		result: result,
+		log: log
+	};
 }
