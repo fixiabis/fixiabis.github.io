@@ -59,6 +59,7 @@
 				input.value = input.value
 									.replace(/\`/g, "└")
 									.replace(/\+/g, "├")
+									.replace(/\-/g, "─")
 									.replace(/\|/g, "│");
 				input.selectionStart = sel.srt;
 				input.selectionEnd = sel.end;
@@ -69,6 +70,7 @@
 				processContent = processContent.replace(/└/g, "`");
 				processContent = processContent.replace(/├/g, "+");
 				processContent = processContent.replace(/│/g, "|");
+				processContent = processContent.replace(/─/g, "-");
 				processContent = processContent.replace(/\n\n/g, "\n");
 				processContent = processContent.replace(/ /g, "");
 				var tree = treeFormat(processContent, true);
