@@ -38,8 +38,13 @@
 		</style>
 	</head>
 	<body>
-		<textarea placeholder="輸入樹，以`(最後子項)，+(子項)，|(層級)進行"></textarea>
-		<textarea id="result" placeholder="輸入值，輸入後請按Enter"></textarea>
+		<textarea placeholder="輸入樹，以`(最後子項)，+(子項)，|(層級)進行。
+例如:
+1
++2
+`3"></textarea>
+		<textarea id="result" placeholder="輸入所有節點/值。
+例如:123/1"></textarea>
 		<script src="treeformat.js"></script>
 		<script src="tree1.js"></script>
 		<script src="tree1rv.js"></script>
@@ -70,7 +75,7 @@
 				try {
 					var text = tree1(tree.nodesName, tree.nodesRelate)
 					result.value = text.log;
-					result.setAttribute("data-content", text.result);
+					result.setAttribute("data-content", text.nodes + "/" + text.result);
 				} catch(e) { console.log(e) }
 			}
 			function showContent(){
@@ -84,10 +89,11 @@
 			result.onfocus = showContent;
 			input.onfocus = showContent;
 			result.onkeyup = function(e){
-				if (e.which != 13) return;
-				var nodesName = prompt("輸入所有節點(免打逗號)。");
+				if (result.value.search("/") == -1) return;
+				var processContent = result.value.split("/")
+				var nodesName = processContent[0];
 				try {
-					var processContent = result.value.replace(/\n/g, "");
+					var processContent = processContent[1];
 					tree = tree1rv(
 						processContent.split(""), 
 						nodesName.split("")

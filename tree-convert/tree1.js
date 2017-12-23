@@ -1,5 +1,6 @@
 function tree1(nodes, relate) {
 	var result = "",
+		nodesText = nodes.join("").split("").sort().join(""),
 		log = "";
 	while(nodes.length > 2) {
 		var minRelateNodes = [];
@@ -19,6 +20,7 @@ function tree1(nodes, relate) {
 		relate.splice(minRelateMinNodeIndex, 1);
 	}
 	return {
+		nodes: nodesText,
 		result: result,
 		log: log
 	};
