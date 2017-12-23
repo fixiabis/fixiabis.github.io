@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			* {
+				-webkit-apearance: none;
+				outline: none;
+				font-size: 20px;
+				font-family: monospace;
+			}
+			html, body {
+				width: 100%; height: 100%;
+				margin: 0px;
+				overflow: hidden;
+			}
+			textarea {
+				resize: none;
+				color: #ddd;
+				background: #222;
+				width: calc(50% - 10px);
+				height: calc(100% - 10px);
+				padding: 5px;
+				border: 0px;
+				float: left;
+			}
+			#result {
+				color: #222;
+				background: #ddd;
+			}
+			@media screen and (max-width: 639px){
+				textarea {
+					width: calc(100% - 10px);
+					height: calc(50% - 10px);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<textarea placeholder="輸入樹，以`(最後子項)，+(子項)，|(層級)進行"></textarea>
+		<textarea id="result" placeholder="輸入值"></textarea>
+		<script src="treeformat.js"></script>
+		<script src="tree1.js"></script>
+		<script src="tree1rv.js"></script>
+		<script>
+			var input = document.querySelector("textarea"),
+				result = document.querySelector("#result");
+			input.onkeyup = function(){
+				var sel = {
+					srt: input.selectionStart,
+					end: input.selectionEnd
+				}
+				input.value = input.value
+									.replace(/\`/g, "└")
+									.replace(/\+/g, "├")
+									.replace(/\|/g, "│");
+				input.selectionStart = sel.srt;
+				input.selectionEnd = sel.end;
+				var processContent = input.value,
+					cutTextIndex = processContent.search("最終結果:");
+				if (cutTextIndex == -1) cutTextIndex = -6;
+				processContent = processContent.substr(cutTextIndex + 6, processContent.length);
+				processContent = processContent.replace(/└/g, "`");
+				processContent = processContent.replace(/├/g, "+");
+				processContent = processContent.replace(/│/g, "|");
+				var tree = treeFormat(processContent, true);
+				try {
+					result.value = tree1(tree.nodesName, tree.nodesRelate);
+				} catch(e) { console.log(e) }
+			}
+			result.onkeyup = function(){
+				var nodesName = "";
+				try {
+					var processContent = result.value.split("\n");
+					processContent = processContent[processContent.length - 1];
+					processContent = processContent.replace("目前答案:", "");
+					for (var i = 1; i <= processContent.length + 2; i++)
+						nodesName += i > 9 ? String.fromCharCode(55 + i) : i;
+					tree = tree1rv(
+						processContent.split(""), 
+						nodesName.split("")
+					);
+					var text = makeTree(tree.nodes, tree.relate, "1", "", 0, 0);
+					input.value = tree.log + text;
+					input.value = input.value
+										.replace(/\`/g, "└")
+										.replace(/\+/g, "├")
+										.replace(/\|/g, "│");
+				} catch(e) { }
+			}
+		</script>
+	</body>
+</html>
