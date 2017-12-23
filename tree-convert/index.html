@@ -64,6 +64,8 @@
 				processContent = processContent.replace(/└/g, "`");
 				processContent = processContent.replace(/├/g, "+");
 				processContent = processContent.replace(/│/g, "|");
+				processContent = processContent.replace(/\n\n/g, "\n");
+				processContent = processContent.replace(/ /g, "");
 				var tree = treeFormat(processContent, true);
 				try {
 					var text = tree1(tree.nodesName, tree.nodesRelate)
