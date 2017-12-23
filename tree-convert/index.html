@@ -66,17 +66,26 @@
 				processContent = processContent.replace(/│/g, "|");
 				var tree = treeFormat(processContent, true);
 				try {
-					result.value = tree1(tree.nodesName, tree.nodesRelate);
+					var text = tree1(tree.nodesName, tree.nodesRelate)
+					result.value = text.log;
+					result.setAttribute("data-content", text.result);
 				} catch(e) { console.log(e) }
 			}
-			result.onkeyup = function(){
-				var nodesName = "";
+			function showContent(){
+				var content = this.getAttribute("data-content");
+				if (content) this.value = content;
+				input.value = input.value
+									.replace(/\`/g, "└")
+									.replace(/\+/g, "├")
+									.replace(/\|/g, "│");
+			}
+			result.onfocus = showContent;
+			input.onfocus = showContent;
+			result.onkeyup = function(e){
+				if (e.which != 13) return;
+				var nodesName = prompt("輸入所有節點(免打逗號)。");
 				try {
-					var processContent = result.value.split("\n");
-					processContent = processContent[processContent.length - 1];
-					processContent = processContent.replace("目前答案:", "");
-					for (var i = 1; i <= processContent.length + 2; i++)
-						nodesName += i > 9 ? String.fromCharCode(55 + i) : i;
+					var processContent = result.value.replace(/\n/g, "");
 					tree = tree1rv(
 						processContent.split(""), 
 						nodesName.split("")
@@ -87,6 +96,7 @@
 										.replace(/\`/g, "└")
 										.replace(/\+/g, "├")
 										.replace(/\|/g, "│");
+					input.setAttribute("data-content", text);
 				} catch(e) { }
 			}
 		</script>
