@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<style>
+			* {
+				font-size: 20px;
+				font-family: monospace;
+				color: #eee;
+				background-color: #222;
+				margin: 0px;
+			}
+			html, body {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			textarea {
+				outline: none;
+				resize: none;
+				width: calc(50% - 20px);
+				height: calc(100% - 60px);
+				position: absolute;
+				top: 40px;
+				padding: 10px;
+				border: 0px;
+			}
+			#source {
+				left: 0px;
+			}
+			#result {
+				background: #333;
+				right: 0px;
+			}
+			textarea::-webkit-scrollbar {
+				width: 0px;
+				height: 0px;
+			}
+			textarea::selection	{
+				color: #222;
+				background-color: #eee;
+			}
+			#control {
+				cursor: default;
+				text-align: center;
+				line-height: 40px;
+				color: #fff;
+				background-color: #34c;
+				width: 80px;
+				height: 40px;
+				position: absolute;
+				bottom: 0px;
+				right: 0px;
+				opacity: 0.2;
+				transition: opacity 1s;
+			}
+			#control:hover {
+				opacity: 1;
+			}
+			#cell {
+				display: table;
+				height: 38px;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				border-width: 1px;
+				border-style: solid;
+				border-collapse: collapse;
+			}
+			#cell div {
+				display: table-cell;
+				text-align: center;
+				line-height: 38px;
+				width: 38px;
+				height: 38px;
+				border-width: 1px;
+				border-style: solid;
+			}
+		</style>
+	</head>
+	<body>
+		<textarea id="source"></textarea>
+		<textarea id="result"></textarea>
+		<div id="control">start</div>
+		<div id="cell"></div>
+		<script>
+			var windowWidth = window.innerWidth,
+				control = document.querySelector("#control"),
+				codeSource = document.querySelector("#source"),
+				codeResult = document.querySelector("#result"),
+				cellRowView = document.querySelector("#cell"),
+				cellLength = Math.round((window.innerWidth - 1) / 39),
+				pointer = 0,
+				pointerTemp = 1,
+				inputIndex = -1,
+				cell = [],
+				speed = 10,
+				running = false;
+			function addNewCell() {
+				cell.push(0);
+				var cellView = document.createElement("div");
+				cellView.innerHTML = cell[i];
+				cellRowView.appendChild(cellView);
+				cellRowView.style.width = cellLength * 39 + "px";
+			}
+			for (var i = 0; i < cellLength; i++) addNewCell();
+			function initial() {
+				var cellViews = document.querySelectorAll("#cell div");
+				pointer = 0;
+				for (var i = 0; i < cell.length; i++) {
+					cellViews[i].innerHTML = cell[i] = 0;
+					cellViews[i].style.color = "";
+					cellViews[i].style.backgroundColor = "";
+				}
+				codeResult.value = "";
+				codeResult.readonly = true;
+			}
+			function execute(cmd) {
+				var cellViews = document.querySelectorAll("#cell div"),
+					cellIndexIsTemp = false;
+				cellViews[pointer].style.color = "";
+				cellViews[pointer].style.backgroundColor = "";
+				cellViews[0].style.color = "";
+				cellViews[0].style.backgroundColor = "";
+				switch (cmd) {
+					case ">":
+						pointer++;
+						if (pointer == cellLength) {
+							cellLength++;
+							addNewCell();
+						}
+						break;
+					case "<":
+						pointer--;
+						break;
+					case "+":
+						cell[pointer]++;
+						break;
+					case "-":
+						cell[pointer]--;
+						break;
+					case ".":
+						codeResult.value += String.fromCharCode(cell[pointer]);
+						break;
+					case "#":
+						cell[pointer] += 2;
+						break;
+					case "=":
+						cell[pointer] -= 2;
+						break;
+					case ";":
+						cell[0] = cell[pointer];
+						cellIndexIsTemp = true;
+						break;
+					case ":":
+						cell[pointer] = cell[0];
+						break;
+				}
+				if (cell[pointer] < 0)
+					cell[pointer] += 256;
+				if (cell[pointer] > 255)
+					cell[pointer] %= 256;
+				var cellIndex = cellIndexIsTemp ? 0 : pointer;
+				cellViews = document.querySelectorAll("#cell div");
+				cellViews[cellIndex].style.color = "#222";
+				cellViews[cellIndex].style.backgroundColor = "#eee";
+				cellViews[cellIndex].innerHTML = cell[cellIndex];
+			}
+			function run(index) {
+				if (!running)
+					return codeSource.readonly = false;
+				codeSource.readonly = true;
+				codeSource.focus();
+				var code = codeSource.value;
+				for (var i = index; i < code.length; i++) {
+					if (code[i].search(/\+|\-|\[|\]|\<|\>|\,|\.|\{|\}|\:|\;|\#|\=/) == -1) continue;
+					var command = code[i];
+					codeSource.selectionStart = i;
+					codeSource.selectionEnd = i + 1;
+					execute(command);
+					index = i;
+					var count = 1;
+					if ((command == "]" || command == "{") && cell[pointer] != 0) {
+						for (var j = i - 1; j > -1; j--) {
+							count += code[j] == "]" ? 1 : code[j] == "[" ? -1 : 0;
+							if (count != 0) continue;
+							index = j - 1;
+							break;
+						}
+					} else if ((command == "[" || command == "}") && cell[pointer] == 0) {
+						for (var j = i + 1; j < code.length; j++) {
+							count += code[j] == "[" ? 1 : code[j] == "]" ? -1 : 0;
+							if (count != 0) continue;
+							index = j - 1;
+							break;
+						}
+					}
+					break;
+				}
+				if (code[index] != ",") {
+					if (code.length == index)
+						return control.click();
+					setTimeout(function() {
+						if (code.length == index)
+							return control.click();
+						run(index + 1);
+					}, speed);
+				} else {
+					inputIndex = index;
+					codeResult.readonly = false;
+					codeResult.focus();
+				}
+			}
+			control.addEventListener("click", function() {
+				if (this.innerHTML == "start") {
+					this.innerHTML = "stop";
+					running = true;
+					initial();
+					run(0);
+				} else {
+					this.innerHTML = "start";
+					running = false;
+					codeSource.selectionStart = codeSource.value.length;
+				}
+			});
+			codeSource.addEventListener("keydown", function(event) {
+				if (event.which != 9) return;
+				event.preventDefault();
+				var selStart = this.selectionStart,
+					stringSrt = this.value.substr(0, selStart),
+					stringEnd = this.value.substr(selStart, this.value.length);
+				this.value = stringSrt + "  " + stringEnd;
+				this.selectionEnd = selStart + 2;
+			});
+			codeResult.addEventListener("keyup", function(event) {
+				if (inputIndex == -1) return;
+				var codeResultLength = codeResult.value.length,
+					ASCIICode = codeResult.value[codeResultLength - 1].charCodeAt();
+				codeSource.focus();
+				cell[pointer] = ASCIICode;
+				execute();
+				run(inputIndex + 1);
+				inputIndex = -1;
+				codeResult.readonly = true;
+			});
+		</script>
+	</body>
+</html>
