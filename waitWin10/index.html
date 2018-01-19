@@ -74,10 +74,21 @@
         請勿關閉電腦。
     </div>
     <script>
+        var fullScreen = false;
         setTimeout(() => document.body.classList.add("color-change"), 1000);
         setTimeout(() => document.querySelector(".title").innerHTML = "我們正在著手讓系統就續", 13000);
         setTimeout(() => document.querySelector(".title").innerHTML = "這可能需要幾分鐘的時間", 24000);
+        window.onkeypress = function (e) {
+            if (fullScreen) e.preventDefault();
+        }
         window.onkeydown = function (e) {
+            if (fullScreen) e.preventDefault();
+        }
+        window.onkeyup = function (e) {
+            if (fullScreen) e.preventDefault();
+            if (e.which == 122) fullScreen = true;
+        }
+        window.oncontextmenu = function (e) {
             e.preventDefault();
         }
     </script>
