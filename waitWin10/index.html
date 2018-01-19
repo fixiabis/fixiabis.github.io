@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            cursor: none;
+            color: #fff;
+            font-family: monospace;
+            background: #2d89ef;
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+
+        .title {
+            transition: opacity 2s;
+        }
+
+        .title {
+            font-size: 100px;
+            text-align: center;
+            line-height: 100px;
+            width: 100%;
+            height: 100px;
+            position: absolute;
+            top: calc(50% - 50px);
+            left: 0px;
+            transition-delay: 1s;
+        }
+
+        .color-change {
+            animation-name: cc;
+            animation-duration: 12s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        .small-title {
+            font-size: 40px;
+            text-align: center;
+            line-height: 200px;
+            width: 100%;
+            height: 200px;
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+        }
+
+        @keyframes cc {
+            25% {
+                background: #2d89ef;
+            }
+            50% {
+                background: #1b3f75;
+            }
+            75% {
+                background: #2d89ef;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title" style="font-family: '微軟正黑體'">
+        歡迎
+    </div>
+    <div class="small-title" style="font-family: '微軟正黑體'">
+        請勿關閉電腦。
+    </div>
+    <script>
+        setTimeout(() => document.body.classList.add("color-change"), 1000);
+        setTimeout(() => document.querySelector(".title").innerHTML = "我們正在著手讓系統就續", 13000);
+        setTimeout(() => document.querySelector(".title").innerHTML = "這可能需要幾分鐘的時間", 24000);
+        window.onkeydown = function (e) {
+            e.preventDefault();
+        }
+    </script>
+</body>
+
+</html>
