@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            font-family: 微軟正黑體, NotoSans;
+        }
+
+        @font-face {
+            font-family: NotoSans;
+            src: url(NotoSansCJKtc-Thin.otf);
+        }
+
+        body {
+            margin: 0px;
+        }
+
+        .card-container {
+            width: 7.5cm;
+            height: 11.5cm;
+            border: solid 1px;
+            float: left;
+        }
+
+        .container {
+            border: solid 1px;
+        }
+
+        .container::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .card {
+            width: (7cm - 1px);
+            height: calc(11cm - 1px);
+            position: relative;
+            margin: 0.25cm;
+            border: solid 1px;
+        }
+
+        .attr {
+            font-size: 0.75cm;
+            text-align: center;
+            line-height: 1.5cm;
+            width: 1.5cm;
+            height: 1.5cm;
+            border: solid 1px;
+            position: absolute;
+            top: -1px;
+            left: -1px;
+        }
+
+        .type {
+            font-size: 0.5cm;
+            text-align: center;
+            line-height: 1.5cm;
+            width: 1.5cm;
+            height: 1.5cm;
+            border: solid 1px;
+            position: absolute;
+            bottom: calc(-1px + 4cm - 1px);
+            right: -1px;
+        }
+
+        .name {
+            font-size: 2.5cm;
+            text-align: center;
+            line-height: 7cm;
+            width: 100%;
+            height: 7cm;
+            border: solid 1px;
+            position: absolute;
+            top: -1px;
+            left: -1px;
+        }
+
+        .desc {
+            width: calc(100% - 10px);
+            height: calc(4cm - 10px - 2px);
+            padding: 5px;
+            border: solid 1px;
+            position: absolute;
+            left: -1px;
+            bottom: -1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"></div>
+    <script>
+        var card = [],
+            character = {
+                attrs: "水火風地雷",
+                resist: {
+                    attr: ["地雷水火風", "火風地雷水"],
+                    name: [
+                        ",,,劍士,弓手,槍使".split(","),
+                        "巫師,法師,術士,槍使,劍士,弓手".split(","),
+                        "弓手,槍使,劍士,術士,巫師,法師".split(",")
+                    ]
+                },
+                skill: [
+                    "(不屈)在場上_選_1張角色牌, ATK-1",
+                    "(亂箭)[_下1位_玩家手牌]_抽_1張進入[墓地]",
+                    "(突刺)此卡可做2次攻擊",
+                    "(魔法)在墓地_選_1張效果牌發動",
+                    "(束縛)在場上_選_1張角色牌下1位回合不可攻擊",
+                    "(幻惑)可重新決定角色攻擊對象",
+                    "(輔助)在場上_選_1張角色牌, ATK+1",
+                    "(詛咒)此卡死亡時，在[場上]_選_1張角色牌送入[墓地]",
+                    "(洗腦)在場上_選_1張角色牌, 放在我方的場上",
+                    "(交易)與其他玩家交換手牌1張"
+                ],
+                names: "劍士,弓手,槍使,法師,術士,巫師,商人".split(","),
+            },
+            effect = [
+                ["水", [{
+                    name: "水流",
+                    desc: "可再從[牌堆]_抽_1張加入[手牌]"
+                }, {
+                    name: "淹沒",
+                    desc: "_下1位_玩家不可出牌"
+                }, {
+                    name: "淨水",
+                    desc: "無效1張卡的效果"
+                }]],
+                ["火", [{
+                    name: "火種",
+                    desc: "可再從[手牌]_選_1張角色到[場上]"
+                }, {
+                    name: "火海",
+                    desc: "送入墓地的效果可將[1張]改為[全部]"
+                }, {
+                    name: "燒毀",
+                    desc: "宣告1種類型, [場上]所有該類型的牌全部送入[墓地]"
+                }]],
+                ["風", [{
+                    name: "順風",
+                    desc: "可將效果的1個數字從1改為2"
+                }, {
+                    name: "逆風",
+                    desc: "效果反向操作, 兩個粗體字詞調換位置即為其效果"
+                }, {
+                    name: "吹落",
+                    desc: "[手牌]_選_1張送入[墓地]"
+                }]],
+                ["地", [{
+                    name: "孕育",
+                    desc: "可從[墓地]_選_1張牌加入[牌堆]"
+                }, {
+                    name: "地震",
+                    desc: "_下1位_玩家回合跳過"
+                }, {
+                    name: "山壁",
+                    desc: "無效1張角色的攻擊"
+                }]],
+                ["雷", [{
+                    name: "制裁",
+                    desc: "[場上]_選_1張送入[墓地]"
+                }, {
+                    name: "精準",
+                    desc: "效果改為可指定, _選_1個底線字詞改為\"發動精準的玩家指定\"即為其效果"
+                }, {
+                    name: "閃電",
+                    desc: "可從[_下1位_玩家手牌]_抽_1張加入[我方手牌]"
+                }]],
+                ["冰", [{
+                    name: "冰柱",
+                    desc: "場上_選_1張角色牌覆蓋, 不可再攻擊"
+                }, {
+                    name: "凍結",
+                    desc: "_下1位_玩家不可抽牌"
+                }]],
+                ["木", [{
+                    name: "麻痺",
+                    desc: "_下1位_玩家不可攻擊"
+                }, {
+                    name: "扎根",
+                    desc: "[場上]_選_1張回到[牌組]"
+                }, {
+                    name: "果實",
+                    desc: "恢復生命點1點"
+                }]],
+                ["金", [{
+                    name: "銳利",
+                    desc: "場上_選_1張角色牌, ATK+1"
+                }, {
+                    name: "反射",
+                    desc: "攻擊無效並給與攻擊玩家1點傷害"
+                }]]
+            ],
+            cardCount = 0,
+            cardStart = location.search.replace("?", "").split("to")[0] * 1,
+            cardEnd = location.search.replace("?", "").split("to")[1] * 1;
+
+        function createCard(attr, type, name, desc, count) {
+            if (count == undefined) count = 1;
+            if (count == 0) return card.push({
+                attr: attr,
+                type: type,
+                name: name,
+                desc: desc
+            });;
+            cardCount++;
+            if (cardCount < cardStart || cardCount > cardEnd) return;
+
+            function descFormat(desc) {
+                var odd = 0;
+                while (desc.indexOf("_") > -1)
+                    desc = desc.replace("_", odd++ % 2 == 0 ? "<u>" : "</u>");
+                desc = desc.replace(/\[/g, "<b>");
+                desc = desc.replace(/\]/g, "</b>");
+                desc = desc.replace(/\n/g, "<br/>");
+                return desc;
+            }
+            var cardContainerDiv = document.createElement("div"),
+                cardDiv = document.createElement("div"),
+                attrDiv = document.createElement("div"),
+                typeDiv = document.createElement("div"),
+                nameDiv = document.createElement("div"),
+                descDiv = document.createElement("div");
+            cardContainerDiv.className = "card-container";
+            cardDiv.className = "card";
+            attrDiv.className = "attr";
+            typeDiv.className = "type";
+            nameDiv.className = "name";
+            descDiv.className = "desc";
+            attrDiv.innerHTML = attr;
+            typeDiv.innerHTML = type;
+            nameDiv.innerHTML = name;
+            descDiv.innerHTML = descFormat(desc);
+            cardContainerDiv.appendChild(cardDiv);
+            cardDiv.appendChild(attrDiv);
+            cardDiv.appendChild(typeDiv);
+            cardDiv.appendChild(nameDiv);
+            cardDiv.appendChild(descDiv);
+            document.querySelector(".container").appendChild(cardContainerDiv);
+            return createCard(attr, type, name, desc, count - 1);
+        }
+        for (var i = 0; i < character.attrs.length; i++) {
+            for (var j = 0; j < 3; j++) {
+                var resist = character.resist,
+                    desc =
+                        "剋制: \n" +
+                        `對上${resist.name[2][j]}時,ATK+3\n` +
+                        `對上${resist.attr[1][i]}屬性角色/${resist.name[1][j]}時,ATK+2\n` +
+                        `對上${resist.attr[0][i]}屬性角色時,ATK+1\n` +
+                        "效果: \n" +
+                        `${character.skill[j]}`;
+                createCard(character.attrs[i], "角色", character.names[j], desc, 2);
+            }
+            for (var j = 3; j < 6; j++) {
+                for (var k = 0; k < 2; k++) {
+                    var resist = character.resist,
+                        desc =
+                            "剋制: \n" +
+                            `對上${resist.name[2][j]}時,ATK+3\n` +
+                            `對上${resist.attr[1][i]}屬性角色/${resist.name[1][j]}時,ATK+2\n` +
+                            `對上${resist.attr[0][i]}屬性角色/${resist.name[0][j]}時,ATK+1\n` +
+                            "效果: \n" +
+                            `${character.skill[j + k * 3]}`;
+                    createCard(character.attrs[i], "角色", character.names[j], desc);
+                }
+            }
+            createCard(character.attrs[i], "角色", character.names[6], "效果: \n" + character.skill[9]);
+        }
+        for (var i = 0; i < effect.length; i++) {
+            var attr = effect[i][0];
+            for (var j = 0; j < effect[i][1].length; j++) {
+                var name = effect[i][1][j].name,
+                    desc = effect[i][1][j].desc;
+                createCard(attr, "效果", name, desc, (name.match(/順風|逆風|精準/) != null ? 6 : 3));
+            }
+        }
+        createCard("無", "規則", "玩法",
+            "洗牌, 所有人平均分配五張\n" +
+            "所有人初始生命值為6, 歸零即敗北\n" +
+            "流程: \n" +
+            "1.抽兩張牌\n" +
+            "2.可出一張角色牌\n" +
+            "3.場上的角色可發動效果或對其他玩家的角色發動攻擊(兩者只能選其一)"
+        );
+        createCard("無", "規則", "攻擊",
+            "所有角色初始ATK=1\n" +
+            "角色卡對上不同角色時ATK會增加\n" +
+            "攻擊後, ATK較小者送入墓地, 若ATK相等則一起送入墓地\n" +
+            "指定玩家並沒有角色可以攻擊時, 可直接攻擊玩家, 使該玩家生命值減少該角色現在ATK\n"
+        );
+        createCard("無", "規則", "其他",
+            "角色效果在任何玩家的回合內只能發動一次\n" +
+            "所有卡的效果皆能即時發動\n" +
+            "沒牌抽時不可將墓地的牌洗回牌組\n" +
+            "逆風可被逆風無效\n" +
+            "精準以最後一個發動者為準\n" +
+            "順風會使燒毀無法發動"
+        );
+        createCard("無", "規則", "相剋",
+            "ATK+3:\n劍士>弓手>槍使>劍士\n法師>術士>巫師>法師\n" +
+            "ATK+2:\n法師>槍使>術師>劍士>巫師>弓手>法師\n水>火>風>地>雷>水"
+        );
+    </script>
+</body>
+
+</html>
