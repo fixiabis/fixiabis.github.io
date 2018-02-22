@@ -26,6 +26,11 @@
             color: #569cd6;
         }
         
+        .annotation {
+            color: #608b4e;
+            background: #222;
+        }
+        
         .now {
             background: #666;
         }
@@ -40,19 +45,31 @@
 
 <body>
     <div class="container">
+        <span class="annotation">
+            /*這是一個多行註解<br>
+            所以可以打兩行或更多*/<br><br>
+            //這是一個單行註解，註解是不會執行的
+        </span><br>
         <span class="keyword-flow" data-step="s1">if</span>
         <span data-step="s2">(<span class="keyword" data-step="s3">true</span>)</span>
-        <span data-step="s4">{<br> &nbsp;&nbsp;&nbsp;<span data-step="s5">execute</span><span data-step="s6">()</span>;<br>&nbsp;&nbsp;
-        <span data-step="s7">execute</span><span data-step="s8">()</span>;<br>}</span><br>
+        <span data-step="s4">{<br>
+            &nbsp;&nbsp;&nbsp;<span class="annotation">//值為true，便會執行大括號中的指令</span><br>
+            &nbsp;&nbsp;&nbsp;<span data-step="s5">execute</span><span data-step="s6">()</span>;<br>
+            &nbsp;&nbsp;&nbsp;<span data-step="s7">execute</span><span data-step="s8">()</span>;<br>}</span><br>
         <span class="keyword-flow" data-step="s9">if</span>
-        <span data-step="s10">(<span class="keyword" data-step="s11">false</span>)</span> {<br>&nbsp;&nbsp;&nbsp;execute();
-        <br> &nbsp;&nbsp;&nbsp;execute();<br>}<br>
+        <span data-step="s10">(<span class="keyword" data-step="s11">false</span>)</span> {<br>
+            &nbsp;&nbsp;&nbsp;<span class="annotation">//值為false，則不執行大括號中的指令</span><br>
+            &nbsp;&nbsp;&nbsp;execute();<br>
+        &nbsp;&nbsp;&nbsp;execute();<br>}<br>
         <span class="keyword-flow" data-step="s12">if</span>
         <span data-step="s13">(<span class="keyword" data-step="s14">true</span>)</span>
         <span data-step="s15">execute</span><span data-step="s16">()</span>;</span><br>
         <span class="keyword-flow" data-step="s17">if</span>
         <span data-step="s18">(<span class="keyword" data-step="s19">false</span>)</span>
-        execute();</span>
+        execute();</span><br>
+        <span class="annotation">
+            //如果指令只有一行可以不用用大括號刮起來
+        </span>
     </div>
     <script>
         function nextStep() {
@@ -65,7 +82,8 @@
                 nowStep[i].classList.add("now");
             step++;
         }
-        var step = 1, timer = setInterval(nextStep, 2000);
+        var step = 1,
+            timer = setInterval(nextStep, 2000);
         nextStep();
     </script>
 </body>
