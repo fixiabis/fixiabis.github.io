@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>if運作狀態</title>
+    <style>
+        @import url(css/code-color.css);
+    </style>
+</head>
+
+<body>
+    <div class="container">
+			<span class="keyword-flow" data-step="s1 s11 s20 s29">for</span>
+			<span data-step="s2 s12 s21 s30">(<span class="keyword-flow" data-step="s3">var</span>
+			<span data-step="s4">i = <span class="number">0</span></span>;
+			<span data-step="s5 s14 s23 s32">i < <span class="number">3</span></span>;
+			<span data-step="s13 s22 s31">i++</span>)</span>
+			<span data-step="s6 s15 s24">{<br><span class="annotation">
+			&nbsp;&nbsp;&nbsp; //i初始為0，若i小於3時會再做一次，每次累加1</span><br>
+			&nbsp;&nbsp;&nbsp; <span data-step="s7 s16 s25">execute</span><span data-step="s8 s17 s26">()</span>;<br>
+			&nbsp;&nbsp;&nbsp; <span data-step="s9 s18 s27">execute</span><span data-step="s10 s19 s28">()</span>;<br>}</span><br>
+			<span class="keyword-flow" data-step="s33 s40 s46 s52">for</span>
+			<span data-step="s34 s41 s47 s53">(<span class="keyword-flow" data-step="s35">var</span>
+			<span data-step="s36">i = <span class="number">0</span></span>;
+			<span data-step="s37 s43 s49 s55">i < <span class="number">3</span></span>;
+			<span data-step="s42 s48 s54">i++</span>)</span>
+			<span data-step="s38 s44 s50">execute</span><span data-step="s39 s45 s51">()</span>;<br>
+			<span class="keyword-flow" data-step="s56">for</span>
+			<span data-step="s57">(<span class="keyword-flow" data-step="s58">var</span>
+			<span data-step="s59">i = <span class="number">0</span></span>;
+			<span data-step="s60">i < <span class="number">0</span></span>; i++)</span> execute();<br>
+			<span class="annotation">//初始為0，但0並不小於0，因此不會執行</span>
+    </div>
+    <script src="js/step.js"></script>
+</body>
+
+</html>
