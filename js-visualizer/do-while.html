@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>do-while運作狀態</title>
+    <style>
+        @import url(css/code-color.css);
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <span class="keyword-flow" data-step="s1">do</span>
+        <span data-step="s2">{<br><span class="annotation">
+        &nbsp;&nbsp;&nbsp; //先執行，若while為false，則不再執行</span><br>
+        &nbsp;&nbsp;&nbsp; <span data-step="s3">print</span><span data-step="s4">(<span class="number" data-step="s5">1</span>)</span>;<br>
+        &nbsp;&nbsp;&nbsp; <span data-step="s6">print</span><span data-step="s7">(<span class="number" data-step="s8">1</span>)</span>;<br>}</span>
+        <span class="keyword-flow" data-step="s9">while</span>
+        <span data-step="s10">(<span class="keyword" data-step="s11">false</span>)</span>;<br>
+        <span class="keyword-flow" data-step="s12">do</span>
+        <span data-step="s13">print</span><span data-step="s14">(<span class="number" data-step="s15">1</span>)</span>;</span>
+        <span class="keyword-flow" data-step="s16">while</span>
+        <span data-step="s17">(<span class="keyword" data-step="s18">true</span>)</span>;<br>
+        <span class="annotation">//值為true，會持續執行指令</span>
+    </div>
+    <div class="field">
+        <div class="temp"></div>
+    </div>
+    <div class="log"></div>
+    <script>
+        var action = {
+				5: function() { temp.innerHTML = "<span class=\"number\">1</span>"; logger.innerHTML += "1"; },
+                11: function() { temp.innerHTML = "<span class=\"keyword\">false</span>" },
+                18: function() { temp.innerHTML = "<span class=\"keyword\">true</span>"; step = 11; },
+            };
+        action[15] = action[5];
+    </script>
+    <script src="js/step.js"></script>
+</body>
+
+</html>
