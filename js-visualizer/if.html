@@ -22,18 +22,31 @@
         <span data-step="s2">(<span class="keyword" data-step="s3">true</span>)</span>
         <span data-step="s4">{<br><span class="annotation">
         &nbsp;&nbsp;&nbsp; //值為true，便會執行大括號中的指令</span><br>
-        &nbsp;&nbsp;&nbsp; <span data-step="s5">execute</span><span data-step="s6">()</span>;<br>
-        &nbsp;&nbsp;&nbsp; <span data-step="s7">execute</span><span data-step="s8">()</span>;<br>}</span><br>
-        <span class="keyword-flow" data-step="s9">if</span>
-        <span data-step="s10">(<span class="keyword" data-step="s11">false</span>)</span> {<br><span class="annotation">
+        &nbsp;&nbsp;&nbsp; <span data-step="s5">print</span><span data-step="s6">(<span class="number" data-step="s7">1</span>)</span>;<br>
+        &nbsp;&nbsp;&nbsp; <span data-step="s8">print</span><span data-step="s9">(<span class="number" data-step="s10">1</span>)</span>;<br>}</span><br>
+        <span class="keyword-flow" data-step="s11">if</span>
+        <span data-step="s12">(<span class="keyword" data-step="s13">false</span>)</span> {<br><span class="annotation">
         &nbsp;&nbsp;&nbsp; //值為false，則不執行大括號中的指令</span><br>
-        &nbsp;&nbsp;&nbsp; execute();<br>
-        &nbsp;&nbsp;&nbsp; execute();<br>}<br>
-        <span class="keyword-flow" data-step="s12">if</span>
-        <span data-step="s13">(<span class="keyword" data-step="s14">true</span>)</span>
-        <span data-step="s15">execute</span><span data-step="s16">()</span>;</span><br>
+        &nbsp;&nbsp;&nbsp; print(<span class="number">1</span>);<br>
+        &nbsp;&nbsp;&nbsp; print(<span class="number">1</span>);<br>}<br>
+        <span class="keyword-flow" data-step="s14">if</span>
+        <span data-step="s15">(<span class="keyword" data-step="s16">true</span>)</span>
+        <span data-step="s17">print</span><span data-step="s18">(<span class="number" data-step="s19">1</span>)</span>;</span><br>
         <span class="annotation">//如果指令只有一行可以不用用大括號刮起來</span>
     </div>
+    <div class="field">
+        <div class="temp"></div>
+    </div>
+    <div class="log"></div>
+    <script>
+        var action = {
+                3: function() { temp.innerHTML = "<span class=\"keyword\">true</span>" },
+                7: function() { temp.innerHTML = "<span class=\"number\">1</span>"; logger.innerHTML += "1" },
+                13: function() { temp.innerHTML = "<span class=\"keyword\">false</span>" }
+            };
+            action[19] = action[10] = action[7];
+            action[16] = action[3];
+    </script>
     <script src="js/step.js"></script>
 </body>
 

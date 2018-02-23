@@ -13,28 +13,59 @@
 
 <body>
     <div class="container">
-			<span class="keyword-flow" data-step="s1 s11 s20 s29">for</span>
-			<span data-step="s2 s12 s21 s30">(<span class="keyword-flow" data-step="s3">var</span>
-			<span data-step="s4">i = <span class="number">0</span></span>;
-			<span data-step="s5 s14 s23 s32">i < <span class="number">3</span></span>;
-			<span data-step="s13 s22 s31">i++</span>)</span>
-			<span data-step="s6 s15 s24">{<br><span class="annotation">
-			&nbsp;&nbsp;&nbsp; //i初始為0，若i小於3時會再做一次，每次累加1</span><br>
-			&nbsp;&nbsp;&nbsp; <span data-step="s7 s16 s25">execute</span><span data-step="s8 s17 s26">()</span>;<br>
-			&nbsp;&nbsp;&nbsp; <span data-step="s9 s18 s27">execute</span><span data-step="s10 s19 s28">()</span>;<br>}</span><br>
-			<span class="keyword-flow" data-step="s33 s40 s46 s52">for</span>
-			<span data-step="s34 s41 s47 s53">(<span class="keyword-flow" data-step="s35">var</span>
-			<span data-step="s36">i = <span class="number">0</span></span>;
-			<span data-step="s37 s43 s49 s55">i < <span class="number">3</span></span>;
-			<span data-step="s42 s48 s54">i++</span>)</span>
-			<span data-step="s38 s44 s50">execute</span><span data-step="s39 s45 s51">()</span>;<br>
-			<span class="keyword-flow" data-step="s56">for</span>
-			<span data-step="s57">(<span class="keyword-flow" data-step="s58">var</span>
-			<span data-step="s59">i = <span class="number">0</span></span>;
-			<span data-step="s60">i < <span class="number">0</span></span>; i++)</span> execute();<br>
-			<span class="annotation">//初始為0，但0並不小於0，因此不會執行</span>
-    </div>
-    <script src="js/step.js"></script>
+		<span class="keyword-flow" data-step="s1 s13 s24 s35">for</span>
+		<span data-step="s2 s14 s25 s36">(<span class="keyword-flow" data-step="s3">var</span>
+		<span data-step="s4">i = <span class="number">0</span></span>;
+		<span data-step="s5 s16 s27 s38">i < <span class="number">3</span></span>;
+		<span data-step="s15 s26 s37">i++</span>)</span>
+		<span data-step="s6 s17 s28">{<br><span class="annotation">
+		&nbsp;&nbsp;&nbsp; //i初始為0，若i小於3時會再做一次，每次累加1</span><br>
+		&nbsp;&nbsp;&nbsp; <span data-step="s7 s18 s29">print</span><span data-step="s8 s19 s30">(<span class="number" data-step="s9 s20 s31">1</span>)</span>;<br>
+		&nbsp;&nbsp;&nbsp; <span data-step="s10 s21 s32">print</span><span data-step="s11 s22 s33">(<span class="number" data-step="s12 s23 s34">1</span>)</span>;<br>}</span><br>
+		<span class="keyword-flow" data-step="s39 s47 s54 s61">for</span>
+		<span data-step="s40 s48 s55 s62">(<span class="keyword-flow" data-step="s41">var</span>
+		<span data-step="s42">i = <span class="number">0</span></span>;
+		<span data-step="s43 s50 s57 s64">i < <span class="number">3</span></span>;
+		<span data-step="s49 s56 s63">i++</span>)</span>
+		<span data-step="s44 s51 s58">print</span><span data-step="s45 s52 s59">(<span class="number" data-step="s46 s53 s60">1</span>)</span>;<br>
+		<span class="keyword-flow" data-step="s65">for</span>
+		<span data-step="s66">(<span class="keyword-flow" data-step="s67">var</span>
+		<span data-step="s68">i = <span class="number">0</span></span>;
+		<span data-step="s69">i < <span class="number">0</span></span>; i++)</span> print(<span class="number">1</span>);<br>
+		<span class="annotation">//初始為0，但0並不小於0，因此不會執行</span>
+	</div>
+	<div class="field">
+		<div class="temp"></div>
+		<div class="var">
+			<div class="var-name" id="var1"></div>
+			<div class="var-value" id="var1val"></div>
+		</div>
+	</div>
+	<div class="log"></div>
+	<script>
+		var var1val = document.querySelector("#var1val"),
+			toVal = function(isZero) {
+				var v = isZero ? 0 : (var1val.innerHTML * 1 + 1);
+				var1val.innerHTML = v;
+				temp.innerHTML = `<span class=\"number\">${isZero ? 0 : v - 1}</span>`;
+			},
+			action = {
+				4: function() {
+					document.querySelector("#var1").innerHTML = "i";
+					toVal(1);
+				},
+				5: function() { temp.innerHTML = "<span class=\"keyword\">true</span>" },
+				9: function() { temp.innerHTML = "<span class=\"number\">1</span>"; logger.innerHTML += "1" },
+				15: function() { toVal() },
+				38: function() { temp.innerHTML = "<span class=\"keyword\">false</span>" },
+			};
+			action[68] = action[42] = action[4];
+			action[69] = action[64] = action[38];
+			action[57] = action[50] = action[43] = action[27] = action[16] = action[5];
+			action[60] = action[53] = action[46] = action[34] = action[31] = action[23] = action[20] = action[12] = action[9];
+			action[63] = action[56] = action[49] = action[37] = action[26] = action[15];
+	</script>
+	<script src="js/step.js"></script>
 </body>
 
 </html>
