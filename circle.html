@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Circle load</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+
+        .circle-container {
+            color: #eee;
+            background: #222;
+            font-size: 30px;
+            text-align: center;
+            line-height: 80px;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            position: relative;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+            border-radius: 50px;
+            transition: opacity 1s;
+        }
+
+        .circle {
+            background: inherit;
+            width: 90%;
+            height: 90%;
+            overflow: hidden;
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            z-index: 1;
+            border-radius: 100%;
+        }
+
+        .circle-left-cover {
+            background: inherit;
+            z-index: 2;
+        }
+
+        .circle-left-cover,
+        .circle-left,
+        .circle-right {
+            width: 50%;
+            height: 100%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        .circle-left,
+        .circle-right {
+            background: #17d;
+            transform-origin: right;
+            transition: transform 0.1s;
+        }
+
+        .circle-content {
+            background: inherit;
+            width: 80%;
+            height: 80%;
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            z-index: 3;
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="circle-container">
+        <div class="circle">
+            <div class="circle-left"></div>
+            <div class="circle-right"></div>
+        </div>
+        <div class="circle-left-cover"></div>
+        <div class="circle-content">0%</div>
+    </div>
+    <script>
+        function circleLoad(per) {
+            if (per > 100) per = 100;
+            document.querySelector(".circle-left-cover").style.display = per > 50 ? "none" : "";
+            document.querySelector(".circle-right").style.transform = `rotate(${per > 50 ? 180 : per / 100 * 360}deg)`;
+            document.querySelector(".circle-left").style.transform = `rotate(${per / 100 * 360}deg)`;
+            document.querySelector(".circle-content").innerHTML = per + "%";
+            if (per == 100) {
+                var container = document.querySelector(".circle-container");
+                container.style.opacity = 0;
+                setTimeout(function () {
+                    container.style.display = "none";
+                }, 1000);
+            }
+        }
+        for (var i = 1; i < 101; i++)
+            (function (i) {
+                setTimeout(function () {
+                    circleLoad(i / 1);
+                }, i * 50)
+            })(i);
+    </script>
+</body>
+
+</html>
