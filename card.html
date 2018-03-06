@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -82,6 +83,7 @@
         }
 
         .desc {
+			font-size: 15px;
             width: calc(100% - 10px);
             height: calc(4cm - 10px - 2px);
             padding: 5px;
@@ -102,24 +104,22 @@
                 resist: {
                     attr: ["地雷水火風", "火風地雷水"],
                     name: [
-                        ",,,劍士,弓手,槍使".split(","),
-                        "巫師,法師,術士,槍使,劍士,弓手".split(","),
-                        "弓手,槍使,劍士,術士,巫師,法師".split(",")
+                        "槍使,劍士,弓手,巫師,法師".split(",")
                     ]
                 },
                 skill: [
-                    "(不屈)在場上_選_1張角色牌, ATK-1",
+                    "(毅力)在場上_選_1張角色牌, ATK+1",
                     "(亂箭)[_下1位_玩家手牌]_抽_1張進入[墓地]",
                     "(突刺)此卡可做2次攻擊",
                     "(魔法)在墓地_選_1張效果牌發動",
-                    "(束縛)在場上_選_1張角色牌下1位回合不可攻擊",
-                    "(幻惑)可重新決定角色攻擊對象",
-                    "(輔助)在場上_選_1張角色牌, ATK+1",
+                    "(弱化)在場上_選_1張角色牌, ATK-1",
+                    "(封印)在場上_選_1張角色牌下1位回合不可攻擊",
                     "(詛咒)此卡死亡時，在[場上]_選_1張角色牌送入[墓地]",
+                    "(幻惑)可重新決定角色攻擊對象",
                     "(洗腦)在場上_選_1張角色牌, 放在我方的場上",
                     "(交易)與其他玩家交換手牌1張"
                 ],
-                names: "劍士,弓手,槍使,法師,術士,巫師,商人".split(","),
+                names: "劍士,弓手,槍使,法師,巫師,商人".split(","),
             },
             effect = [
                 ["水", [{
@@ -203,12 +203,13 @@
 
         function createCard(attr, type, name, desc, count) {
             if (count == undefined) count = 1;
-            if (count == 0) return card.push({
+            if (count == 0) return;
+			card.push({
                 attr: attr,
                 type: type,
                 name: name,
                 desc: desc
-            });;
+            });
             cardCount++;
             if (cardCount < cardStart || cardCount > cardEnd) return;
 
@@ -248,30 +249,19 @@
         for (var i = 0; i < character.attrs.length; i++) {
             for (var j = 0; j < 3; j++) {
                 var resist = character.resist,
-                    desc =
-                        "剋制: \n" +
-                        `對上${resist.name[2][j]}時,ATK+3\n` +
-                        `對上${resist.attr[1][i]}屬性角色/${resist.name[1][j]}時,ATK+2\n` +
-                        `對上${resist.attr[0][i]}屬性角色時,ATK+1\n` +
-                        "效果: \n" +
-                        `${character.skill[j]}`;
+                    desc = `效果: \n ${character.skill[j]}`;
                 createCard(character.attrs[i], "角色", character.names[j], desc, 2);
             }
-            for (var j = 3; j < 6; j++) {
-                for (var k = 0; k < 2; k++) {
+            for (var j = 3; j < 5; j++) {
+                for (var k = 0; k < 3; k++) {
                     var resist = character.resist,
-                        desc =
-                            "剋制: \n" +
-                            `對上${resist.name[2][j]}時,ATK+3\n` +
-                            `對上${resist.attr[1][i]}屬性角色/${resist.name[1][j]}時,ATK+2\n` +
-                            `對上${resist.attr[0][i]}屬性角色/${resist.name[0][j]}時,ATK+1\n` +
-                            "效果: \n" +
-                            `${character.skill[j + k * 3]}`;
+	                    desc = `效果: \n ${character.skill[(j - 3) * 3 + k + 3]}`;
                     createCard(character.attrs[i], "角色", character.names[j], desc);
                 }
             }
-            createCard(character.attrs[i], "角色", character.names[6], "效果: \n" + character.skill[9]);
         }
+		for (var i = 0; i < 3; i++)
+            createCard("無", "角色", character.names[5], "效果: \n" + character.skill[9]);
         for (var i = 0; i < effect.length; i++) {
             var attr = effect[i][0];
             for (var j = 0; j < effect[i][1].length; j++) {
@@ -280,7 +270,7 @@
                 createCard(attr, "效果", name, desc, (name.match(/順風|逆風|精準/) != null ? 6 : 3));
             }
         }
-        createCard("無", "規則", "玩法",
+        /*createCard("無", "規則", "玩法",
             "洗牌, 所有人平均分配五張\n" +
             "所有人初始生命值為6, 歸零即敗北\n" +
             "流程: \n" +
@@ -305,7 +295,11 @@
         createCard("無", "規則", "相剋",
             "ATK+3:\n劍士>弓手>槍使>劍士\n法師>術士>巫師>法師\n" +
             "ATK+2:\n法師>槍使>術師>劍士>巫師>弓手>法師\n水>火>風>地>雷>水"
-        );
+        );*/
+		var shuffle = [];
+		for (var i = 0; i < card.length; i++) {
+			shuffle.push(card.splice((Math.random() * card.length) | 0, 1)[0]);
+		}
     </script>
 </body>
 
