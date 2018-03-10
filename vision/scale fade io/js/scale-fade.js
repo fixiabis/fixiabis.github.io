@@ -5,8 +5,8 @@ function scaleFade(elem) {
     for (var i = 0; i < views.length; i++) {
         var view = views[i];
         view.style.zIndex = views.length - i;
-        view.style.lineHeight = "100vh";
-        view.style.fontSize = "50vh";
+        view.style.lineHeight = view.clientHeight + "px";
+        view.style.fontSize = view.clientHeight * 0.3 + "px";
         view.style.textAlign = "center";
         view.innerHTML = i + 1;
     }
