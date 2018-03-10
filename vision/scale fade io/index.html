@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @import "css/scale-fade.css";
+        html,
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+
+        .scale-fade-io-container {
+            color: #eee;
+            background: #222;
+        }
+
+        .scale-fade-io-view {
+            background: #333;
+        }
+    </style>
+    <script src="js/scale-fade.js"></script>
+</head>
+
+<body>
+    <div class="scale-fade-io-container"></div>
+    <script>
+        var c = document.querySelector(".scale-fade-io-container");
+        for (var i = 0; i < 100; i++) {
+            var view = document.createElement("div");
+            view.className = "scale-fade-io-view";
+            c.appendChild(view);
+        }
+        scaleFade(window);
+    </script>
+</body>
+
+</html>

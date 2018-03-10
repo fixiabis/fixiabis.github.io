@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>viewer</title>
+    <style>
+        @import "scale fade io/css/scale-fade.css";
+        @import "circle progress/css/circle.css";
+        html,
+        body {
+            background: #eee;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+
+        .scale-fade-io-container {
+            color: #eee;
+            background: #222;
+        }
+
+        .scale-fade-io-view {
+            background: #333;
+        }
+    </style>
+    <script src="circle progress/js/createElement.js"></script>
+    <script src="circle progress/js/circle.js"></script>
+    <script src="scale fade io/js/scale-fade.js"></script>
+</head>
+
+<body>
+    <div class="scale-fade-io-container"></div>
+    <script>
+        var circle = new Circle(),
+            scaleFadeIOContainer = document.querySelector(".scale-fade-io-container");
+        scaleFadeIOContainer.style.background = "#eee";
+        document.body.appendChild(scaleFadeIOContainer);
+        setAttrs.bind(circle)({
+            container: scaleFadeIOContainer,
+            view: {
+                style: {
+                    position: "relative",
+                    top: "calc(50% - 150px)",
+                    left: "calc(50% - 150px)"
+                }
+            },
+            size: 300,
+            lineWidth: 20,
+            lineColor: "#222",
+            fontColor: "#222",
+            oncomplete: function () {
+                this.view.style.transition = "all 1s";
+                this.view.style.transform = "rotateY(360deg)";
+                this.view.style.opacity = "0";
+                this.circleView.right.transition = "all 1s";
+                this.circleView.left.transition = "all 1s";
+                this.lineColor = "#eee";
+                this.fontColor = "#eee";
+                this.background = "#222";
+                scaleFadeIOContainer.style.transition = "background 1s";
+                scaleFadeIOContainer.style.background = "";
+                setTimeout(function () {
+                    var c = document.querySelector(".scale-fade-io-container"),
+                        views = [];
+                    for (var i = 0; i < 5; i++) {
+                        var view = document.createElement("div");
+                        view.className = "scale-fade-io-view";
+                        c.appendChild(view);
+                        views.push(view);
+                    }
+                    scaleFade(window);
+                    views[0].style.transform = "";
+                    views[0].style.opacity = 0;
+                    setTimeout(function () {
+                        views[0].style.transform = "scale(1)";
+                        views[0].style.opacity = 1;
+                    }, 100);
+                }, 1000);
+            }
+        });
+        var percents = [0];
+        while (percents[percents.length - 1] < 100)
+            percents.push(percents[percents.length - 1] + Math.floor(Math.random() * 10) + 1);
+        for (var i = 1; i < percents.length; i++)
+            (function (i) {
+                setTimeout(function () {
+                    circle.progress(percents[i]);
+                }, i * 100);
+            })(i);
+    </script>
+</body>
+
+</html>
