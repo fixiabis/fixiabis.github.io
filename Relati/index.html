@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <script src="js/Board.js"></script>
+    <script src="js/ViewableBoard.js"></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        var board = new ViewableBoard(15, 15, document.body),
+            turn = 1,
+            record = [],
+            relati = {
+                root: {},
+                relati: {},
+                domain: {},
+                prevJudge: []
+            },
+            isRelati = function (grid, sym, needList) {
+                if (relati.prevJudge.indexOf(grid.crd) > -1) return true;
+                var relatiCrd = [],
+                    gridO = grid.getGridsByRelCrd("O"),
+                    grid2O = grid.getGridsByRelCrd("2O"),
+                    gridQ = grid.getGridsByRelCrd("IIH,IHH"),
+                    isOwner = grid => grid && grid._.symbol == sym && grid._.status != "dead",
+                    isSpace = grid => grid && (grid._.symbol == "" || grid._.status == "dead");
+                for (var i = 0; i < gridO.length; i++)
+                    if (isOwner(gridO[i]))
+                        relatiCrd.push(gridO[i].crd);
+                for (var i = 0; i < grid2O.length; i++) {
+                    if (!isOwner(grid2O[i])) continue;
+                    if (isSpace(gridO[i]))
+                        relatiCrd.push(grid2O[i].crd);
+                }
+                for (var i = 0; i < gridQ.length; i++) {
+                    if (!isOwner(gridQ[i])) continue;
+                    var relCrd = grid.getRelCrdByGrid(gridQ[i]),
+                        SVGrid = grid.getGridByRelCrd(relCrd.replace(/2./, "")),
+                        DVGrid = grid.getGridByRelCrd(relCrd.replace(/1./, "")),
+                        DSVGrid = grid.getGridByRelCrd(relCrd.replace(/1./, "").replace("2", "1")),
+                        HVGrid = grid.getGridByRelCrd(relCrd.replace("2", "1").replace(/1/g, ""));
+                    if ((isSpace(HVGrid) && (isSpace(SVGrid) || isSpace(DSVGrid))) || isSpace(DSVGrid) && isSpace(DVGrid))
+                        relatiCrd.push(gridQ[i].crd);
+                }
+                if (needList) return relatiCrd;
+                return relatiCrd.length > 0;
+            },
+            isBranch = function (grid, sym) {
+                var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"];
+                for (var i = 0; i < relCrd.length; i++)
+                    for (var j = 1; j < 15; j++) {
+                        var gridX = grid.getGridByRelCrd(j + relCrd[i]);
+                        if (!gridX) break;
+                        if (gridX._.symbol == "") continue;
+                        if (gridX._.symbol == sym) return true;
+                        else break;
+                    }
+            },
+            prevRelati = function (sym) {
+                for (var i in board.grids) {
+                    var grid = board.grids[i];
+                    if (isRelati(grid, sym) && grid._.symbol == "")
+                        relati.prevJudge.push(i);
+                }
+            },
+            relatiTree = function (grid, sym, parent) {
+                var relatiCrd = isRelati(grid, sym, true);
+                if (relati.relati[sym].indexOf(grid.crd) > -1) return;
+                relati.relati[sym].push(grid.crd);
+                relati.relati.all.push(grid.crd);
+                for (var i = 0; i < relatiCrd.length; i++)
+                    relatiTree(board.grids[relatiCrd[i]], sym, grid);
+            },
+            resetJudge = function () {
+                for (var i in board.grids)
+                    board.grids[i].setStatus("status", "");
+            },
+            branchJudge = function () {
+                var rootCrd = [
+                    record.indexOf(relati.root.O.crd),
+                    record.indexOf(relati.root.X.crd)
+                ];
+                for (var i = 0; i < record.length; i++) {
+                    if (i > rootCrd[i % 2]) continue;
+                    board.grids[record[i]].setStatus("status", "dead");
+                }
+            },
+            relatiJudge = function () {
+                relati.relati = { all: [], O: [], X: [] };
+                relati.prevJudge = [];
+                for (var sym in relati.root) {
+                    relati.root[sym].setStatus("status", "root");
+                    relatiTree(relati.root[sym], sym);
+                }
+                relati.prevJudge = [];
+                var noRelatiFirst = false;
+                for (var i = 0; i < record.length; i++) {
+                    var sym = i % 2 == 0 ? "O" : "X",
+                        crd = record[i];
+                    if (!crd || board.grids[crd]._.status == "root") continue;
+                    if (relati.relati.all.indexOf(crd) == -1) {
+                        var noRelati = true;
+                        if (!noRelatiFirst) noRelatiFirst = true;
+                        else {
+                            var relatiCrd = isRelati(board.grids[crd], sym, true);
+                            for (var j = 0; j < relatiCrd.length; j++)
+                                if (relati.relati[sym].indexOf(relatiCrd[j].crd) > -1) {
+                                    noRelati = false;
+                                    relatiTree(board.grids[crd], sym);
+                                    break;
+                                }
+                        }
+                        if (noRelati) {
+                            var grid = board.grids[crd];
+                            grid.setStatus("status", "dead");
+                        }
+                    }
+                }
+                prevRelati(turn % 2 == 0 ? "X" : "O");
+                board.refresh();
+            },
+            domainJudge = function () {
+                var space = {
+                    all: [],
+                    area: [],
+                    visited: []
+                };
+                relati.domain = {};
+                for (var crd in board.grids)
+                    if (board.grids[crd]._.symbol == "")
+                        spaceAssign(space, board.grids[crd], -1);
+                console.log("areas:" + space.area.length);
+            },
+            spaceAssign = function (space, grid, areaIndex) {
+                if (space.visited.indexOf(grid.crd) > -1) return;
+                space.visited.push(grid.crd);
+                if (areaIndex == -1) {
+                    areaIndex = space.area.length;
+                    space.area.push([grid.crd]);
+                } else space.area[areaIndex].push(grid.crd);
+                var gridO = grid.getGridsByRelCrd("O");
+                for (var i = 0; i < gridO.length; i++)
+                    if (gridO[i] && gridO[i]._.symbol == "")
+                        spaceAssign(space, gridO[i], areaIndex);
+            };
+        board.ongridclick = function (grid) {
+            var sym = turn % 2 == 0 ? "X" : "O";
+            if (grid._.symbol != "") return;
+            if (isRelati(grid, sym) || turn < 3) {
+                if (turn < 3) {
+                    relati.root[sym] = grid;
+                    grid.setStatus("status", "root");
+                }
+                grid.setStatus("symbol", sym);
+                turn++;
+                record.push(grid.crd);
+            } else if (isBranch(grid, sym)) {
+                grid.setStatus("status", "root");
+                relati.root[sym] = grid;
+                grid.setStatus("symbol", sym);
+                turn++;
+                record.push(grid.crd);
+            }
+            board.refresh();
+            resetJudge();
+            if (turn > 2) {
+                branchJudge();
+                relatiJudge();
+            }
+            domainJudge();
+        };
+        board.setStatusMark("status", "", painter => painter.strokeStyle = "black");
+        board.setStatusMark("status", "dead", painter => painter.strokeStyle = "red");
+        board.setStatusMark("status", "root", painter => painter.strokeStyle = "blue");
+        board.setStatusMark("area", "", function (painter, size, x, y) {
+            painter.clearRect(x, y, size - 1, size - 1);
+        });
+        board.setStatusMark("area", "O", function (painter, size, x, y) {
+            painter.fillStyle = "indianred";
+            painter.fillRect(x, y, size, size);
+        });
+        board.setStatusMark("area", "X", function (painter, size, x, y) {
+            painter.fillStyle = "lightblue";
+            painter.fillRect(x, y, size, size);
+        });
+        board.setStatusMark("symbol", "", function (painter, size, x, y) {
+            painter.clearRect(x, y, size - 1, size - 1);
+        });
+        board.setStatusMark("symbol", "O", function (painter, size, x, y) {
+            size -= 20;
+            x += 10;
+            y += 10;
+            var halfSize = size / 2;
+            painter.lineWidth = 2;
+            painter.beginPath();
+            painter.arc(x + halfSize, y + halfSize, halfSize, 0 * Math.PI, 2 * Math.PI);
+            painter.stroke();
+            painter.closePath();
+            painter.lineWidth = 1;
+            painter.strokeStyle = "black";
+        });
+        board.setStatusMark("symbol", "X", function (painter, size, x, y) {
+            size -= 20;
+            x += 10;
+            y += 10;
+            painter.lineWidth = 2;
+            painter.beginPath();
+            painter.moveTo(x, y);
+            painter.lineTo(x + size, y + size);
+            painter.stroke();
+            painter.closePath();
+            painter.beginPath();
+            painter.moveTo(x, y + size);
+            painter.lineTo(x + size, y);
+            painter.stroke();
+            painter.closePath();
+            painter.lineWidth = 1;
+            painter.strokeStyle = "black";
+        });
+        board.setStatusOrder("area", "status", "symbol");
+        for (var i in board.grids) {
+            board.grids[i].setStatus("status", "");
+            board.grids[i].setStatus("symbol", "");
+        }
+    </script>
+</body>
+
+</html>
