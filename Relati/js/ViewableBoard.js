@@ -103,6 +103,7 @@ class ViewableBoard extends Board {
     }
     setStatusToGrid(statusName, status, grid) {
         grid._[statusName] = status;
+        this.refresh();
     }
     setStatusMark(statusName, status, mark) {
         if (!this._.gridMark[statusName])
