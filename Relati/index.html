@@ -29,8 +29,10 @@
                 battle: [],
                 relati: {},
                 domain: {},
-                domainCount: {},
                 prevJudge: []
+            },
+            recordBoard = function (crd) {
+                record[turn - 1] = crd;
             },
             isRelati = function (grid, sym, needList) {
                 if (relati.prevJudge.indexOf(grid.crd) > -1) return true;
@@ -112,13 +114,6 @@
             battleJudge = function () {
                 for (var i = 0; i < relati.dead.length; i++)
                     board.grids[relati.dead[i]]._.status = "dead";
-                var winner = "";
-                for (var i in relati.root)
-                    if (board.grids[relati.root[i]]._.status == "dead")
-                        winner = winner == "" ? i == "O" ? "X" : "O" : "P";
-                if (winner)
-                    if (winner == "P") alert("平手");
-                    else alert(winner + "贏了");
             },
             branchJudge = function () {
                 var rootCrd = [
@@ -126,8 +121,7 @@
                     record.indexOf(relati.root.X)
                 ];
                 for (var i = 0; i < record.length; i++) {
-                    if (i >= rootCrd[i % 2]) continue;
-                    if (!board.grids[record[i]]) continue;
+                    if (i >= rootCrd[i % 2] || !board.grids[record[i]]) continue;
                     board.grids[record[i]]._.status = "dead";
                 }
             },
@@ -201,14 +195,16 @@
                                     belong = "P"
                                     break P;
                                 }
+                            } else if (space.P.indexOf(space.area[i][j]) > -1) {
+                                belong = "P";
+                                break P;
                             }
                     if (belong != "P" && belong != "")
                         relati.domain[belong] = relati.domain[belong].concat(space.area[i]);
                 }
                 for (var sym in relati.domain)
                     for (var i = 0; i < relati.domain[sym].length; i++)
-                        if (board.grids[relati.domain[sym][i]]._.status != "dead")
-                            board.grids[relati.domain[sym][i]]._.area = sym;
+                        board.grids[relati.domain[sym][i]]._.area = sym;
             },
             spaceAreaTree = function (grid, space, index) {
                 if (space.visited.indexOf(grid.crd) > -1) return;
@@ -219,7 +215,7 @@
                 } else space.area[index].push(grid.crd);
                 var gridO = grid.getGridsByRelCrd("O");
                 for (var i = 0; i < gridO.length; i++)
-                    if (gridO[i] && (gridO[i]._.symbol == "" || gridO[i]._.status == "dead"))
+                    if (gridO[i] && gridO[i]._.symbol == "")
                         spaceAreaTree(gridO[i], space, index);
             };
         board.ongridclick = function (grid) {
@@ -237,7 +233,7 @@
                 } else if (isBattle(grid, sym)) {
                     grid._.status = "dead";
                     relati.dead.push(grid.crd);
-                    record.push(grid.crd);
+                    recordBoard(grid.crd);
                 }
                 resetJudge();
                 if (turn > 2) {
@@ -255,14 +251,14 @@
                         grid._.status = "root";
                     }
                     grid._.symbol = sym;
+                    recordBoard(grid.crd);
                     turn++;
-                    record.push(grid.crd);
                 } else if (isBranch(grid, sym)) {
                     grid._.status = "root";
                     relati.root[sym] = grid.crd;
                     grid._.symbol = sym;
+                    recordBoard(grid.crd);
                     turn++;
-                    record.push(grid.crd);
                 }
             resetJudge();
             if (turn > 2) {
@@ -272,6 +268,10 @@
                 domainJudge();
             }
             board.refresh();
+        };
+        window.onkeydown = function (event) {
+            if (event.which == 90 && event.ctrlKey) {
+            }
         };
         board.setStatusMark("status", "", painter => painter.strokeStyle = "black");
         board.setStatusMark("status", "dead", painter => painter.strokeStyle = "red");
