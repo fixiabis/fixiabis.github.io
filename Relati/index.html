@@ -21,6 +21,7 @@
 <body>
     <script>
         var board = new ViewableBoard(11, 11, document.body),
+            gameRecord = [],
             turn = 1,
             record = [],
             relati = {
@@ -30,9 +31,6 @@
                 relati: {},
                 domain: {},
                 prevJudge: []
-            },
-            recordBoard = function (crd) {
-                record[turn - 1] = crd;
             },
             isRelati = function (grid, sym, needList) {
                 if (relati.prevJudge.indexOf(grid.crd) > -1) return true;
@@ -106,14 +104,15 @@
             },
             resetJudge = function () {
                 for (var i in board.grids) {
-                    if (board.grids[i]._.status != "select")
-                        board.grids[i]._.status = "";
+                    board.grids[i]._.status = "";
                     board.grids[i]._.area = "";
                 }
             },
             battleJudge = function () {
                 for (var i = 0; i < relati.dead.length; i++)
                     board.grids[relati.dead[i]]._.status = "dead";
+                for (var i = 0; i < relati.battle.length; i++)
+                    board.grids[relati.battle[i]]._.status = "select";
             },
             branchJudge = function () {
                 var rootCrd = [
@@ -217,9 +216,35 @@
                 for (var i = 0; i < gridO.length; i++)
                     if (gridO[i] && gridO[i]._.symbol == "")
                         spaceAreaTree(gridO[i], space, index);
+            },
+            recordBoard = function () {
+                var newRecord = {
+                    turn: turn,
+                    record: [],
+                    relati: {
+                        root: {
+                            O: relati.root.O,
+                            X: relati.root.X
+                        },
+                        dead: [],
+                        battle: []
+                    },
+                    boardGrid: {}
+                };
+                for (var i = 0; i < record.length; i++)
+                    newRecord.record.push(record[i]);
+                for (var i = 0; i < relati.dead.length; i++)
+                    newRecord.relati.dead.push(relati.dead[i]);
+                for (var i = 0; i < relati.battle.length; i++)
+                    newRecord.relati.battle.push(relati.battle[i]);
+                for (var i in board.grids)
+                    newRecord.boardGrid[i] = board.grids[i]._.symbol;
+                console.log(newRecord);
+                gameRecord.push(newRecord);
             };
         board.ongridclick = function (grid) {
-            var sym = turn % 2 == 0 ? "X" : "O";
+            var sym = turn % 2 == 0 ? "X" : "O",
+                boardIsChange = true;
             if (grid._.symbol != "") {
                 if (grid._.symbol == sym) {
                     if (relati.battle.indexOf(grid.crd) < 0) return;
@@ -233,8 +258,27 @@
                 } else if (isBattle(grid, sym)) {
                     grid._.status = "dead";
                     relati.dead.push(grid.crd);
-                    recordBoard(grid.crd);
+                    record.push(grid.crd);
                 }
+            } else if (relati.battle.length < 1) {
+                if (isRelati(grid, sym) || turn < 3) {
+                    if (turn < 3) {
+                        relati.root[sym] = grid.crd;
+                        grid._.status = "root";
+                    }
+                    grid._.symbol = sym;
+                    record.push(grid.crd);
+                    turn++;
+                } else if (isBranch(grid, sym)) {
+                    grid._.status = "root";
+                    relati.root[sym] = grid.crd;
+                    grid._.symbol = sym;
+                    record.push(grid.crd);
+                    turn++;
+                }
+            } else boardIsChange = false;
+            if (boardIsChange) {
+                recordBoard();
                 resetJudge();
                 if (turn > 2) {
                     branchJudge();
@@ -242,35 +286,28 @@
                     relatiJudge();
                     domainJudge();
                 }
-                return board.refresh();
+                board.refresh();
             }
-            if (relati.battle.length < 1)
-                if (isRelati(grid, sym) || turn < 3) {
-                    if (turn < 3) {
-                        relati.root[sym] = grid.crd;
-                        grid._.status = "root";
-                    }
-                    grid._.symbol = sym;
-                    recordBoard(grid.crd);
-                    turn++;
-                } else if (isBranch(grid, sym)) {
-                    grid._.status = "root";
-                    relati.root[sym] = grid.crd;
-                    grid._.symbol = sym;
-                    recordBoard(grid.crd);
-                    turn++;
-                }
-            resetJudge();
-            if (turn > 2) {
-                branchJudge();
-                battleJudge();
-                relatiJudge();
-                domainJudge();
-            }
-            board.refresh();
         };
         window.onkeydown = function (event) {
             if (event.which == 90 && event.ctrlKey) {
+                var oldRecord = gameRecord.pop();
+                oldRecord = gameRecord.pop();
+                if (!oldRecord) return;
+                for (var i in oldRecord.relati)
+                    relati[i] = oldRecord.relati[i];
+                record = oldRecord.record;
+                turn = oldRecord.turn;
+                for (var i in oldRecord.boardGrid)
+                    board.grids[i]._.symbol = oldRecord.boardGrid[i];
+                resetJudge();
+                if (turn > 2) {
+                    branchJudge();
+                    battleJudge();
+                    relatiJudge();
+                    domainJudge();
+                }
+                board.refresh();
             }
         };
         board.setStatusMark("status", "", painter => painter.strokeStyle = "black");

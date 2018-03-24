@@ -22,10 +22,10 @@ class ViewableBoard extends Board {
                         var pX = event.offsetX,
                             pY = event.offsetY;
                         if (
-                            pX >= x * (gridSize + 1) + 2 &&
-                            pX <= (x + 1) * (gridSize + 1) &&
-                            pY >= y * (gridSize + 1) + 2 &&
-                            pY <= (y + 1) * (gridSize + 1)
+                            pX >= x * (this.gridSize + 1) + 2 &&
+                            pX <= (x + 1) * (this.gridSize + 1) &&
+                            pY >= y * (this.gridSize + 1) + 2 &&
+                            pY <= (y + 1) * (this.gridSize + 1)
                         ) this.ongridclick && this.ongridclick(this.grids[crd]);
                     }.bind(this));
                     this.grids[crd].x = x * (gridSize + 1) + 2;
