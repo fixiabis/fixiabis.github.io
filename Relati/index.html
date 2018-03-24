@@ -292,7 +292,8 @@
         window.onkeydown = function (event) {
             if (event.which == 90 && event.ctrlKey) {
                 var oldRecord = gameRecord.pop();
-                oldRecord = gameRecord.pop();
+                if (oldRecord.turn == turn)
+                    oldRecord = gameRecord.pop();
                 if (!oldRecord) return;
                 for (var i in oldRecord.relati)
                     relati[i] = oldRecord.relati[i];
