@@ -106,11 +106,14 @@ class ViewableBoard extends Board {
         this.refresh();
     }
     setStatusMark(statusName, status, mark) {
-        if (!this._.gridMark[statusName])
+        if (!this._.gridMark[statusName]) {
             this._.gridMark[statusName] = {};
+            this._.statusOrder.push(statusName);
+        }
         this._.gridMark[statusName][status] = mark;
     }
     setStatusOrder() {
+        this._.statusOrder = [];
         for (var i = 0; i < arguments.length; i++)
             this._.statusOrder.push(arguments[i]);
     }
