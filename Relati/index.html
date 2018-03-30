@@ -20,7 +20,7 @@
 
 <body>
     <script>
-        var board = new ViewableBoard(11, 11, document.body),
+        var board = new ViewableBoard(15, 15, document.body),
             gameRecord = [],
             turn = 1,
             record = [],
@@ -40,7 +40,7 @@
                     grid2O = grid.getGridsByRelCrd("2O"),
                     gridQ = grid.getGridsByRelCrd("IIH,IHH"),
                     isOwner = grid => grid && grid._.symbol == sym && grid._.status != "dead",
-                    isSpace = grid => grid && (grid._.symbol == "" || grid._.status == "dead");
+                    isSpace = grid => grid && (grid._.symbol == "" || grid._.dead == "battle");
                 for (var i = 0; i < gridO.length; i++)
                     if (isOwner(gridO[i]))
                         relatiCrd.push(gridO[i].crd);
@@ -62,7 +62,7 @@
                 if (needList) return relatiCrd;
                 return relatiCrd.length > 0;
             },
-            isBranch = function (grid, sym) {
+            isEscape = function (grid, sym) {
                 var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"];
                 for (var i = 0; i < relCrd.length; i++)
                     for (var j = 1; j < 15; j++) {
@@ -123,7 +123,7 @@
                 for (var i = 0; i < relati.battle.length; i++)
                     board.grids[relati.battle[i]]._.status = "select";
             },
-            branchJudge = function () {
+            escapeJudge = function () {
                 var rootCrd = [
                     record.indexOf(relati.root.O),
                     record.indexOf(relati.root.X)
@@ -131,6 +131,7 @@
                 for (var i = 0; i < record.length; i++) {
                     if (i >= rootCrd[i % 2] || !board.grids[record[i]]) continue;
                     board.grids[record[i]]._.status = "dead";
+                    board.grids[record[i]]._.dead = "battle";
                 }
             },
             relatiJudge = function () {
@@ -177,8 +178,8 @@
                         if (space.all.indexOf(crd) < 0)
                             space.all.push(crd);
                         var isRelatiGrid = isRelati(grid, i),
-                            isBranchGrid = isBranch(grid, i)
-                        if (isRelatiGrid || isBranchGrid) {
+                            isEscapeGrid = isEscape(grid, i)
+                        if (isRelatiGrid || isEscapeGrid) {
                             if (isRelatiGrid && i == sym) prevJudge.push(crd);
                             space[i].push(crd);
                             if (i == "X" && space.O.indexOf(crd) > -1)
@@ -259,6 +260,7 @@
                         battle: { O: 0, X: 0 }
                     };
                 for (var crd in board.grids) {
+                    if (board.grids[crd]._.status == "dead") continue;
                     if (board.grids[crd]._.symbol == "") {
                         var syms = "OX";
                         for (var i = 0; i < syms.length; i++)
@@ -290,6 +292,10 @@
                         logData += `X方優先${point[type[i]].X - point[type[i]].O}點`;
                     logData += "\n";
                 }
+                if (battleable.O.indexOf(relati.root.X) > -1)
+                    logData += "X方危險了";
+                if (battleable.X.indexOf(relati.root.O) > -1)
+                    logData += "O方危險了";
                 console.log(logData);
                 if (analysisRecord) {
 
@@ -326,7 +332,7 @@
                     grid._.symbol = sym;
                     record.push(grid.crd);
                     turn++;
-                } else if (isBranch(grid, sym)) {
+                } else if (isEscape(grid, sym)) {
                     grid._.status = "root";
                     relati.root[sym] = grid.crd;
                     grid._.symbol = sym;
@@ -338,7 +344,7 @@
                 recordBoard();
                 resetJudge();
                 if (turn > 2) {
-                    branchJudge();
+                    escapeJudge();
                     battleJudge();
                     relatiJudge();
                     domainJudge();
@@ -362,7 +368,7 @@
                     board.grids[i]._.symbol = oldRecord.boardGrid[i];
                 resetJudge();
                 if (turn > 2) {
-                    branchJudge();
+                    escapeJudge();
                     battleJudge();
                     relatiJudge();
                     domainJudge();
