@@ -24,6 +24,7 @@
             gameRecord = [],
             turn = 1,
             record = [],
+            analysisRecord = {},
             relati = {
                 root: {},
                 dead: [],
@@ -33,7 +34,7 @@
                 prevJudge: []
             },
             isRelati = function (grid, sym, needList) {
-                if (relati.prevJudge.indexOf(grid.crd) > -1) return true;
+                if (relati.prevJudge.indexOf(grid.crd) > -1 && !needList) return true;
                 var relatiCrd = [],
                     gridO = grid.getGridsByRelCrd("O"),
                     grid2O = grid.getGridsByRelCrd("2O"),
@@ -73,8 +74,9 @@
                     }
                 return false;
             },
-            isBattle = function (grid, sym) {
-                var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"];
+            isBattle = function (grid, sym, needList) {
+                var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"],
+                    battleCrd = [];
                 for (var i = 0; i < relCrd.length; i++) {
                     var j = 1;
                     while (true) {
@@ -84,15 +86,19 @@
                             var gridX2 = grid.getGridByRelCrd((j + 1) + relCrd[i]);
                             if (!gridX2) break;
                             if (gridX2._.symbol == sym && gridX2._.status != "dead") {
-                                gridX2._.status = "select";
-                                relati.battle.push(gridX2.crd);;
+                                if (!needList) {
+                                    gridX2._.status = "select";
+                                    relati.battle.push(gridX2.crd);
+                                }
+                                battleCrd.push(gridX2.crd);
                                 break;
                             }
                         }
                         j++;
                     }
                 }
-                return relati.battle.length > 0;
+                if (needList) return battleCrd;
+                return battleCrd.length > 0;
             },
             relatiTree = function (grid, sym, parent) {
                 var relatiCrd = isRelati(grid, sym, true);
@@ -243,6 +249,55 @@
                 for (var i in board.grids)
                     newRecord.boardGrid[i] = board.grids[i]._.symbol; 1
                 gameRecord.push(newRecord);
+            },
+            analysis = function () {
+                var relatiable = { O: [], X: [], P: [] },
+                    battleable = { O: [], X: [] },
+                    point = {
+                        relati: { O: 0, X: 0 },
+                        domain: { O: relati.domain.O.length, X: relati.domain.X.length },
+                        battle: { O: 0, X: 0 }
+                    };
+                for (var crd in board.grids) {
+                    if (board.grids[crd]._.symbol == "") {
+                        var syms = "OX";
+                        for (var i = 0; i < syms.length; i++)
+                            if (isRelati(board.grids[crd], syms[i], true).length > 0)
+                                relatiable[syms[i]].push(crd);
+                    } else {
+                        var sym = board.grids[crd]._.symbol == "O" ? "X" : "O";
+                        if (isBattle(board.grids[crd], sym, true).length > 0)
+                            battleable[sym].push(crd);
+                    }
+                }
+                relatiable.P = relatiable.O.filter(crd => relatiable.X.indexOf(crd) > -1);
+                relatiable.O = relatiable.O.filter(crd => relatiable.P.indexOf(crd) < 0);
+                relatiable.X = relatiable.X.filter(crd => relatiable.P.indexOf(crd) < 0);
+                point.relati.O = relatiable.O.length;
+                point.relati.X = relatiable.X.length;
+                point.battle.O = battleable.O.length;
+                point.battle.X = battleable.X.length;
+                var type = ["domain", "relati", "battle"],
+                    typeName = ["領地", "連線", "戰鬥"],
+                    logData = "";
+                for (var i = 0; i < type.length; i++) {
+                    logData += typeName[i] + "方面:";
+                    if (point[type[i]].O == point[type[i]].X)
+                        logData += "勢均力敵";
+                    else if (point[type[i]].O > point[type[i]].X)
+                        logData += `O方優先${point[type[i]].O - point[type[i]].X}點`;
+                    else
+                        logData += `X方優先${point[type[i]].X - point[type[i]].O}點`;
+                    logData += "\n";
+                }
+                console.log(logData);
+                if (analysisRecord) {
+
+                } else analysisRecord = {
+                    relati: point.relati,
+                    domain: point.domain,
+                    battle: point.battle
+                }
             };
         board.ongridclick = function (grid) {
             var sym = turn % 2 == 0 ? "X" : "O",
@@ -261,7 +316,7 @@
                     grid._.status = "dead";
                     relati.dead.push(grid.crd);
                     record.push(grid.crd);
-                }
+                } else boardIsChange = false;
             } else if (relati.battle.length < 1) {
                 if (isRelati(grid, sym) || turn < 3) {
                     if (turn < 3) {
@@ -277,7 +332,7 @@
                     grid._.symbol = sym;
                     record.push(grid.crd);
                     turn++;
-                }
+                } else boardIsChange = false;
             } else boardIsChange = false;
             if (boardIsChange) {
                 recordBoard();
@@ -287,9 +342,11 @@
                     battleJudge();
                     relatiJudge();
                     domainJudge();
+                    analysis();
                 }
                 board.refresh();
             }
+
         };
         window.onkeydown = function (event) {
             if (event.which == 90 && event.ctrlKey) {
@@ -320,20 +377,28 @@
         board.setStatusMark("dead", "", painter => painter.strokeStyle = painter.strokeStyle);
         board.setStatusMark("dead", "battle", painter => painter.strokeStyle = "brown");
         board.setStatusMark("area", "", function (painter, size, x, y) {
-            painter.clearRect(x, y, size - 2, size - 2);
+            painter.clearRect(x - 1, y - 1, size, size);
         });
         board.setStatusMark("area", "O", function (painter, size, x, y) {
             painter.fillStyle = "indianred";
-            painter.fillRect(x, y, size - 2, size - 2);
+            painter.fillRect(x - 1, y - 1, size, size);
         });
         board.setStatusMark("area", "X", function (painter, size, x, y) {
             painter.fillStyle = "lightblue";
-            painter.fillRect(x, y, size - 2, size - 2);
+            painter.fillRect(x - 1, y - 1, size, size);
         });
         board.setStatusMark("symbol", "O", function (painter, size, x, y) {
-            size -= 20;
-            x += 10;
-            y += 10;
+            if (size > 25) {
+                size -= 20;
+                x += 10;
+                y += 10;
+            } else if (size > 15) {
+                size -= 10;
+                x += 5;
+                y += 5;
+            }
+            x -= 1;
+            y -= 1;
             var halfSize = size / 2;
             painter.lineWidth = 2;
             painter.beginPath();
@@ -344,9 +409,17 @@
             painter.strokeStyle = "black";
         });
         board.setStatusMark("symbol", "X", function (painter, size, x, y) {
-            size -= 20;
-            x += 10;
-            y += 10;
+            if (size > 25) {
+                size -= 20;
+                x += 10;
+                y += 10;
+            } else if (size > 15) {
+                size -= 10;
+                x += 5;
+                y += 5;
+            }
+            x -= 1;
+            y -= 1;
             painter.lineWidth = 2;
             painter.beginPath();
             painter.moveTo(x, y);

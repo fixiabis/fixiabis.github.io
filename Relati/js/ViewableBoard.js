@@ -28,8 +28,8 @@ class ViewableBoard extends Board {
                             pY <= (y + 1) * (this.gridSize + 1)
                         ) this.ongridclick && this.ongridclick(this.grids[crd]);
                     }.bind(this));
-                    this.grids[crd].x = x * (gridSize + 1) + 2;
-                    this.grids[crd].y = y * (gridSize + 1) + 2;
+                    this.grids[crd].x = x * (gridSize + 1);
+                    this.grids[crd].y = y * (gridSize + 1);
                     this.grids[crd].setStatus = function (statusName, status) {
                         this.setStatusToGrid(statusName, status, this.grids[crd]);
                     }.bind(this);
