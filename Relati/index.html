@@ -69,7 +69,7 @@
                         var gridX = grid.getGridByRelCrd(j + relCrd[i]);
                         if (!gridX) break;
                         if (gridX._.symbol == "") continue;
-                        if (gridX._.symbol != sym) break;
+                        if (gridX._.symbol != sym && gridX._.status == "dead" && gridX._.dead == "") break;
                         if (gridX._.symbol == sym && gridX._.status != "dead") return true;
                     }
                 return false;
@@ -131,7 +131,6 @@
                 for (var i = 0; i < record.length; i++) {
                     if (i >= rootCrd[i % 2] || !board.grids[record[i]]) continue;
                     board.grids[record[i]]._.status = "dead";
-                    board.grids[record[i]]._.dead = "battle";
                 }
             },
             relatiJudge = function () {
@@ -250,61 +249,68 @@
                 for (var i in board.grids)
                     newRecord.boardGrid[i] = board.grids[i]._.symbol; 1
                 gameRecord.push(newRecord);
-            },
-            analysis = function () {
-                var relatiable = { O: [], X: [], P: [] },
-                    battleable = { O: [], X: [] },
-                    point = {
-                        relati: { O: 0, X: 0 },
-                        domain: { O: relati.domain.O.length, X: relati.domain.X.length },
-                        battle: { O: 0, X: 0 }
-                    };
-                for (var crd in board.grids) {
-                    if (board.grids[crd]._.status == "dead") continue;
-                    if (board.grids[crd]._.symbol == "") {
-                        var syms = "OX";
-                        for (var i = 0; i < syms.length; i++)
-                            if (isRelati(board.grids[crd], syms[i], true).length > 0)
-                                relatiable[syms[i]].push(crd);
-                    } else {
-                        var sym = board.grids[crd]._.symbol == "O" ? "X" : "O";
-                        if (isBattle(board.grids[crd], sym, true).length > 0)
-                            battleable[sym].push(crd);
-                    }
-                }
-                relatiable.P = relatiable.O.filter(crd => relatiable.X.indexOf(crd) > -1);
-                relatiable.O = relatiable.O.filter(crd => relatiable.P.indexOf(crd) < 0);
-                relatiable.X = relatiable.X.filter(crd => relatiable.P.indexOf(crd) < 0);
-                point.relati.O = relatiable.O.length;
-                point.relati.X = relatiable.X.length;
-                point.battle.O = battleable.O.length;
-                point.battle.X = battleable.X.length;
-                var type = ["domain", "relati", "battle"],
-                    typeName = ["領地", "連線", "戰鬥"],
-                    logData = "";
-                for (var i = 0; i < type.length; i++) {
-                    logData += typeName[i] + "方面:";
-                    if (point[type[i]].O == point[type[i]].X)
-                        logData += "勢均力敵";
-                    else if (point[type[i]].O > point[type[i]].X)
-                        logData += `O方優先${point[type[i]].O - point[type[i]].X}點`;
-                    else
-                        logData += `X方優先${point[type[i]].X - point[type[i]].O}點`;
-                    logData += "\n";
-                }
-                if (battleable.O.indexOf(relati.root.X) > -1)
-                    logData += "X方危險了";
-                if (battleable.X.indexOf(relati.root.O) > -1)
-                    logData += "O方危險了";
-                console.log(logData);
-                if (analysisRecord) {
-
-                } else analysisRecord = {
-                    relati: point.relati,
-                    domain: point.domain,
-                    battle: point.battle
-                }
             };
+        var analysis = function () {
+            var relatiable = { O: [], X: [], P: [] },
+                battleable = { O: [], X: [] },
+                point = {
+                    relati: { O: 0, X: 0 },
+                    domain: { O: relati.domain.O.length, X: relati.domain.X.length },
+                    battle: { O: 0, X: 0 }
+                };
+            for (var crd in board.grids) {
+                if (board.grids[crd]._.status == "dead") continue;
+                if (board.grids[crd]._.symbol == "") {
+                    var syms = "OX";
+                    for (var i = 0; i < syms.length; i++)
+                        if (isRelati(board.grids[crd], syms[i], true).length > 0)
+                            relatiable[syms[i]].push(crd);
+                } else {
+                    var sym = board.grids[crd]._.symbol == "O" ? "X" : "O";
+                    if (isBattle(board.grids[crd], sym, true).length > 0)
+                        battleable[sym].push(crd);
+                }
+            }
+            relatiable.P = relatiable.O.filter(crd => relatiable.X.indexOf(crd) > -1);
+            relatiable.O = relatiable.O.filter(crd => relatiable.P.indexOf(crd) < 0);
+            relatiable.X = relatiable.X.filter(crd => relatiable.P.indexOf(crd) < 0);
+            point.relati.O = relatiable.O.length;
+            point.relati.X = relatiable.X.length;
+            point.battle.O = battleable.O.length;
+            point.battle.X = battleable.X.length;
+            var type = ["domain", "relati", "battle"],
+                typeName = ["領地", "連線", "戰鬥"],
+                logData = "";
+            for (var i = 0; i < type.length; i++) {
+                logData += typeName[i] + "方面:";
+                if (point[type[i]].O == point[type[i]].X)
+                    logData += "勢均力敵";
+                else if (point[type[i]].O > point[type[i]].X)
+                    logData += `O方優先${point[type[i]].O - point[type[i]].X}點`;
+                else
+                    logData += `X方優先${point[type[i]].X - point[type[i]].O}點`;
+                logData += "\n";
+            }
+            if (analysisRecord.relati) {
+                var statusName = ["增加領地", "正在擴展", "戰力提升"];
+                for (var i = 0; i < type.length; i++) {
+                    if (analysisRecord[type[i]].O < point[type[i]].O) logData += `O方${statusName[i]}\n`;
+                    if (analysisRecord[type[i]].X < point[type[i]].X) logData += `X方${statusName[i]}\n`;
+                }
+            }
+            analysisRecord = {
+                relati: point.relati,
+                domain: point.domain,
+                battle: point.battle,
+                able: {
+                    relati: relatiable,
+                    battle: battleable
+                }
+            }
+            if (battleable.O.indexOf(relati.root.X) > -1) logData += "X方危險了\n";
+            if (battleable.X.indexOf(relati.root.O) > -1) logData += "O方危險了\n";
+            console.log(logData);
+        };
         board.ongridclick = function (grid) {
             var sym = turn % 2 == 0 ? "X" : "O",
                 boardIsChange = true;
