@@ -28,6 +28,16 @@ class ViewableBoard extends Board {
                             pY <= (y + 1) * (this.gridSize + 1)
                         ) this.ongridclick && this.ongridclick(this.grids[crd]);
                     }.bind(this));
+                    view.addEventListener("mousemove", function (event) {
+                        var pX = event.offsetX,
+                            pY = event.offsetY;
+                        if (
+                            pX >= x * (this.gridSize + 1) + 2 &&
+                            pX <= (x + 1) * (this.gridSize + 1) &&
+                            pY >= y * (this.gridSize + 1) + 2 &&
+                            pY <= (y + 1) * (this.gridSize + 1)
+                        ) this.ongridhover && this.ongridhover(this.grids[crd]);
+                    }.bind(this));
                     this.grids[crd].x = x * (gridSize + 1);
                     this.grids[crd].y = y * (gridSize + 1);
                     this.grids[crd].setStatus = function (statusName, status) {
@@ -97,6 +107,17 @@ class ViewableBoard extends Board {
                 if (this._.gridMark[statusName] && this._.gridMark[statusName][status])
                     this._.gridMark[statusName][status](this.painter, this.gridSize - 1, grid.x, grid.y);
             }
+    }
+    clean() {
+        if (this.onclean) this.onclean();
+    }
+    gameStart() {
+        if (this.onclean) this.onclean();
+        if (this.ongamestart) this.ongamestart();
+    }
+    clickGrid(crd) {
+        if (typeof crd != "string") return this.clickGrid(crd.crd);
+        this.ongridclick(this.grids[crd]);
     }
     getStatusFromGrid(statusName, grid) {
         return grid._[statusName];

@@ -29,6 +29,8 @@
                 root: {},
                 dead: [],
                 battle: [],
+                battleFar: [],
+                shield: [],
                 relati: {},
                 domain: {},
                 prevJudge: []
@@ -39,8 +41,12 @@
                     gridO = grid.getGridsByRelCrd("O"),
                     grid2O = grid.getGridsByRelCrd("2O"),
                     gridQ = grid.getGridsByRelCrd("IIH,IHH"),
-                    isOwner = grid => grid && grid._.symbol == sym && grid._.status != "dead",
-                    isSpace = grid => grid && (grid._.symbol == "" || grid._.dead == "battle");
+                    isOwner = grid => grid && grid._.symbol == sym && grid._.dead == "" && grid._.status != "dead",
+                    isSpace = grid => grid && (
+                        grid._.symbol == "" ||
+                        (grid._.status == "dead" && grid._.dead == "") ||
+                        (grid._.symbol == sym && grid._.dead == "shield")
+                    );
                 for (var i = 0; i < gridO.length; i++)
                     if (isOwner(gridO[i]))
                         relatiCrd.push(gridO[i].crd);
@@ -69,7 +75,7 @@
                         var gridX = grid.getGridByRelCrd(j + relCrd[i]);
                         if (!gridX) break;
                         if (gridX._.symbol == "") continue;
-                        if (gridX._.symbol != sym && gridX._.status == "dead" && gridX._.dead == "") break;
+                        if (gridX._.symbol != sym) break;
                         if (gridX._.symbol == sym && gridX._.status != "dead") return true;
                     }
                 return false;
@@ -77,19 +83,24 @@
             isBattle = function (grid, sym, needList) {
                 var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"],
                     battleCrd = [];
+                if (grid._.status == "dead") return false;
                 for (var i = 0; i < relCrd.length; i++) {
                     var j = 1;
                     while (true) {
                         var gridX = grid.getGridByRelCrd(j + relCrd[i]);
-                        if (!gridX || gridX._.symbol == "" || (gridX._.symbol != sym && gridX._.status != "dead")) break;
+                        if (
+                            !gridX || gridX._.symbol == "" ||
+                            (gridX._.symbol != sym && (
+                                gridX._.status != "dead" ||
+                                gridX._.dead == "shield")
+                            )
+                        ) break;
                         if (gridX._.symbol == sym && gridX._.status != "dead") {
                             var gridX2 = grid.getGridByRelCrd((j + 1) + relCrd[i]);
                             if (!gridX2) break;
                             if (gridX2._.symbol == sym && gridX2._.status != "dead") {
-                                if (!needList) {
-                                    gridX2._.status = "select";
+                                if (!needList)
                                     relati.battle.push(gridX2.crd);
-                                }
                                 battleCrd.push(gridX2.crd);
                                 break;
                             }
@@ -100,6 +111,37 @@
                 if (needList) return battleCrd;
                 return battleCrd.length > 0;
             },
+            isBattleFar = function (grid, sym, needList) {
+                var relCrd = ["F", "B", "R", "L", "FR", "BR", "FL", "BL"],
+                    battleFarCrd = [];
+                if (grid._.status == "dead") return false;
+                for (var i = 0; i < relCrd.length; i++) {
+                    var j = 1;
+                    while (true) {
+                        var gridX = grid.getGridByRelCrd(j + relCrd[i]);
+                        if (!gridX) break;
+                        if (gridX._.symbol != "" && gridX._.symbol != sym) break;
+                        if (gridX._.symbol == sym)
+                            if (gridX._.status != "dead") {
+                                var gridX2 = grid.getGridByRelCrd((j + 1) + relCrd[i]);
+                                if (!gridX2) break;
+                                if (gridX2._.symbol == sym && gridX2._.status != "dead") {
+                                    if (!needList)
+                                        relati.battleFar.push([gridX.crd, gridX2.crd]);
+                                    battleFarCrd.push([gridX.crd, gridX2.crd]);
+                                    break;
+                                }
+                            } else break;
+                        j++;
+                    }
+                }
+                if (needList) return battleFarCrd;
+                return battleFarCrd.length > 0;
+            },
+            isSheild = function (grid) {
+                if (grid._.status == "") return true;
+                return false;
+            },
             relatiTree = function (grid, sym, parent) {
                 var relatiCrd = isRelati(grid, sym, true);
                 if (relati.relati[sym].indexOf(grid.crd) > -1) return;
@@ -107,6 +149,18 @@
                 relati.relati.all.push(grid.crd);
                 for (var i = 0; i < relatiCrd.length; i++)
                     relatiTree(board.grids[relatiCrd[i]], sym, grid);
+            },
+            spaceAreaTree = function (grid, space, index) {
+                if (space.visited.indexOf(grid.crd) > -1) return;
+                space.visited.push(grid.crd);
+                if (index == -1) {
+                    index = space.area.length;
+                    space.area.push([grid.crd]);
+                } else space.area[index].push(grid.crd);
+                var gridO = grid.getGridsByRelCrd("O");
+                for (var i = 0; i < gridO.length; i++)
+                    if (gridO[i] && gridO[i]._.symbol == "")
+                        spaceAreaTree(gridO[i], space, index);
             },
             resetJudge = function () {
                 for (var i in board.grids) {
@@ -120,8 +174,15 @@
                     board.grids[relati.dead[i]]._.status = "dead";
                     board.grids[relati.dead[i]]._.dead = "battle";
                 }
+                for (var i = 0; i < relati.battleFar.length; i++)
+                    for (var j = 0; j < relati.battleFar[i].length; j++)
+                        board.grids[relati.battleFar[i][j]]._.status = "selectFar";
                 for (var i = 0; i < relati.battle.length; i++)
                     board.grids[relati.battle[i]]._.status = "select";
+            },
+            shieldJudge = function () {
+                for (var i = 0; i < relati.shield.length; i++)
+                    board.grids[relati.shield[i]]._.dead = "shield";
             },
             escapeJudge = function () {
                 var rootCrd = [
@@ -131,6 +192,7 @@
                 for (var i = 0; i < record.length; i++) {
                     if (i >= rootCrd[i % 2] || !board.grids[record[i]]) continue;
                     board.grids[record[i]]._.status = "dead";
+                    board.grids[record[i]]._.dead = "battle";
                 }
             },
             relatiJudge = function () {
@@ -152,7 +214,7 @@
                         else {
                             var relatiCrd = isRelati(board.grids[crd], sym, true);
                             for (var j = 0; j < relatiCrd.length; j++)
-                                if (relati.relati[sym].indexOf(relatiCrd[j].crd) > -1) {
+                                if (relati.relati[sym].indexOf(relatiCrd[j]) > -1) {
                                     noRelati = false;
                                     relatiTree(board.grids[crd], sym);
                                     break;
@@ -214,18 +276,6 @@
                     for (var i = 0; i < relati.domain[sym].length; i++)
                         board.grids[relati.domain[sym][i]]._.area = sym;
             },
-            spaceAreaTree = function (grid, space, index) {
-                if (space.visited.indexOf(grid.crd) > -1) return;
-                space.visited.push(grid.crd);
-                if (index == -1) {
-                    index = space.area.length;
-                    space.area.push([grid.crd]);
-                } else space.area[index].push(grid.crd);
-                var gridO = grid.getGridsByRelCrd("O");
-                for (var i = 0; i < gridO.length; i++)
-                    if (gridO[i] && gridO[i]._.symbol == "")
-                        spaceAreaTree(gridO[i], space, index);
-            },
             recordBoard = function () {
                 var newRecord = {
                     turn: turn,
@@ -236,7 +286,9 @@
                             X: relati.root.X
                         },
                         dead: [],
-                        battle: []
+                        battle: [],
+                        battleFar: [],
+                        shield: []
                     },
                     boardGrid: {}
                 };
@@ -246,6 +298,10 @@
                     newRecord.relati.dead.push(relati.dead[i]);
                 for (var i = 0; i < relati.battle.length; i++)
                     newRecord.relati.battle.push(relati.battle[i]);
+                for (var i = 0; i < relati.battleFar.length; i++)
+                    newRecord.relati.battleFar.push(relati.battleFar[i]);
+                for (var i = 0; i < relati.shield.length; i++)
+                    newRecord.relati.shield.push(relati.shield[i]);
                 for (var i in board.grids)
                     newRecord.boardGrid[i] = board.grids[i]._.symbol; 1
                 gameRecord.push(newRecord);
@@ -267,8 +323,10 @@
                             relatiable[syms[i]].push(crd);
                 } else {
                     var sym = board.grids[crd]._.symbol == "O" ? "X" : "O";
-                    if (isBattle(board.grids[crd], sym, true).length > 0)
-                        battleable[sym].push(crd);
+                    if (
+                        isBattle(board.grids[crd], sym, true).length > 0 ||
+                        isBattleFar(board.grids[crd], sym, true).length > 0
+                    ) battleable[sym].push(crd);
                 }
             }
             relatiable.P = relatiable.O.filter(crd => relatiable.X.indexOf(crd) > -1);
@@ -312,24 +370,48 @@
             console.log(logData);
         };
         board.ongridclick = function (grid) {
-            var sym = turn % 2 == 0 ? "X" : "O",
-                boardIsChange = true;
+            var sym = turn % 2 == 0 ? "X" : "O";
             if (grid._.symbol != "") {
                 if (grid._.symbol == sym) {
-                    if (relati.battle.indexOf(grid.crd) < 0) return;
-                    for (var i = 0; i < relati.battle.length; i++)
-                        board.grids[relati.battle[i]]._.status = "";
-                    grid._.status = "dead";
-                    relati.dead.push(grid.crd);
-                    record[record.length - 1] += "-" + grid.crd;
-                    relati.battle = [];
+                    if (relati.battle.length > 0 || relati.battleFar.length > 0) {
+                        if (relati.battle.indexOf(grid.crd) > -1) {
+                            relati.dead.push(grid.crd);
+                            record[record.length - 1] += "-" + grid.crd;
+                        } else {
+                            var isBattleFarGrid = false;
+                            for (var i = 0; i < relati.battleFar.length; i++) {
+                                if (relati.battleFar[i].indexOf(grid.crd) > -1) {
+                                    for (var j = 0; j < relati.battleFar[i].length; j++)
+                                        relati.dead.push(relati.battleFar[i][j]);
+                                    record[record.length - 1] += "-" + relati.battleFar[i].toString().replace(",", "&");
+                                    isBattleFarGrid = true;
+                                }
+                            }
+                            if (!isBattleFarGrid) return;
+
+                        }
+                        for (var i = 0; i < relati.battle.length; i++)
+                            board.grids[relati.battle[i]]._.status = "";
+                        for (var i = 0; i < relati.battleFar.length; i++)
+                            for (var j = 0; j < relati.battleFar[i].length; j++)
+                                board.grids[relati.battleFar[i][j]]._.status = "";
+                        relati.battle = [];
+                        relati.battleFar = [];
+                    } else if (isSheild(grid)) {
+                        relati.dead.push(grid.crd);
+                        relati.shield.push(grid.crd);
+                        record.push(grid.crd);
+                    } else return;
                     turn++;
-                } else if (isBattle(grid, sym)) {
-                    grid._.status = "dead";
-                    relati.dead.push(grid.crd);
-                    record.push(grid.crd);
-                } else boardIsChange = false;
-            } else if (relati.battle.length < 1) {
+                } else {
+                    var isBattleGrid = isBattle(grid, sym),
+                        isBattleFarGrid = isBattleFar(grid, sym);
+                    if (isBattleGrid || isBattleFarGrid) {
+                        relati.dead.push(grid.crd);
+                        record.push(grid.crd);
+                    } else return;
+                }
+            } else if (relati.battle.length < 1 && relati.battleFar.length < 1) {
                 if (isRelati(grid, sym) || turn < 3) {
                     if (turn < 3) {
                         relati.root[sym] = grid.crd;
@@ -344,50 +426,26 @@
                     grid._.symbol = sym;
                     record.push(grid.crd);
                     turn++;
-                } else boardIsChange = false;
-            } else boardIsChange = false;
-            if (boardIsChange) {
-                recordBoard();
-                resetJudge();
-                if (turn > 2) {
-                    escapeJudge();
-                    battleJudge();
-                    relatiJudge();
-                    domainJudge();
-                    analysis();
-                }
-                board.refresh();
+                } else return;
+            } else return;
+            recordBoard();
+            resetJudge();
+            if (turn > 2) {
+                escapeJudge();
+                battleJudge();
+                shieldJudge();
+                relatiJudge();
+                domainJudge();
+                analysis();
             }
-
+            board.refresh();
         };
-        window.onkeydown = function (event) {
-            if (event.which == 90 && event.ctrlKey) {
-                var oldRecord = gameRecord.pop();
-                if (oldRecord.turn == turn)
-                    oldRecord = gameRecord.pop();
-                if (!oldRecord) return;
-                for (var i in oldRecord.relati)
-                    relati[i] = oldRecord.relati[i];
-                record = oldRecord.record;
-                turn = oldRecord.turn;
-                for (var i in oldRecord.boardGrid)
-                    board.grids[i]._.symbol = oldRecord.boardGrid[i];
-                resetJudge();
-                if (turn > 2) {
-                    escapeJudge();
-                    battleJudge();
-                    relatiJudge();
-                    domainJudge();
-                }
-                board.refresh();
+        board.onclean = function () {
+            for (var i in board.grids) {
+                board.grids[i]._.status = "";
+                board.grids[i]._.symbol = "";
             }
-        };
-        board.setStatusMark("status", "", painter => painter.strokeStyle = "black");
-        board.setStatusMark("status", "dead", painter => painter.strokeStyle = "red");
-        board.setStatusMark("status", "root", painter => painter.strokeStyle = "blue");
-        board.setStatusMark("status", "select", painter => painter.strokeStyle = "orange");
-        board.setStatusMark("dead", "", painter => painter.strokeStyle = painter.strokeStyle);
-        board.setStatusMark("dead", "battle", painter => painter.strokeStyle = "brown");
+        }
         board.setStatusMark("area", "", function (painter, size, x, y) {
             painter.clearRect(x - 1, y - 1, size, size);
         });
@@ -399,6 +457,14 @@
             painter.fillStyle = "lightblue";
             painter.fillRect(x - 1, y - 1, size, size);
         });
+        board.setStatusMark("status", "", painter => painter.strokeStyle = "black");
+        board.setStatusMark("status", "dead", painter => painter.strokeStyle = "red");
+        board.setStatusMark("status", "root", painter => painter.strokeStyle = "blue");
+        board.setStatusMark("status", "select", painter => painter.strokeStyle = "orange");
+        board.setStatusMark("status", "selectFar", painter => painter.strokeStyle = "green");
+        board.setStatusMark("dead", "", painter => painter.strokeStyle = painter.strokeStyle);
+        board.setStatusMark("dead", "battle", painter => painter.strokeStyle = "brown");
+        board.setStatusMark("dead", "shield", painter => painter.strokeStyle = "navy");
         board.setStatusMark("symbol", "O", function (painter, size, x, y) {
             if (size > 25) {
                 size -= 20;
@@ -446,12 +512,31 @@
             painter.lineWidth = 1;
             painter.strokeStyle = "black";
         });
-        board.setStatusOrder("area", "status", "dead", "symbol");
-        for (var i in board.grids) {
-            board.grids[i]._.status = "";
-            board.grids[i]._.symbol = "";
-        }
-        board.refresh();
+        board.gameStart();
+        window.onkeydown = function (event) {
+            if (event.which == 90 && event.ctrlKey) {
+                var oldRecord = gameRecord.pop();
+                if (oldRecord.turn == turn)
+                    oldRecord = gameRecord.pop();
+                if (!oldRecord) return;
+                for (var i in oldRecord.relati)
+                    relati[i] = oldRecord.relati[i];
+                record = oldRecord.record;
+                turn = oldRecord.turn;
+                for (var i in oldRecord.boardGrid)
+                    board.grids[i]._.symbol = oldRecord.boardGrid[i];
+                resetJudge();
+                if (turn > 2) {
+                    escapeJudge();
+                    battleJudge();
+                    shieldJudge();
+                    relatiJudge();
+                    domainJudge();
+                    analysis();
+                }
+                board.refresh();
+            }
+        };
     </script>
 </body>
 
