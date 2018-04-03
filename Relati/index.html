@@ -207,8 +207,11 @@
                 for (var i = 0; i < record.length; i++) {
                     var sym = i % 2 == 0 ? "O" : "X",
                         crd = record[i];
-                    if (!board.grids[crd] || board.grids[crd]._.status == "root") continue;
+                    if (
+                        !board.grids[crd] || board.grids[crd]._.status == "root" || board.grids[crd]._.dead != ""
+                    ) continue;
                     if (relati.relati.all.indexOf(crd) == -1) {
+                        console.log(crd);
                         var noRelati = true;
                         if (!noRelatiFirst) noRelatiFirst = true;
                         else {
@@ -369,6 +372,7 @@
             if (battleable.X.indexOf(relati.root.O) > -1) logData += "O方危險了\n";
             console.log(logData);
         };
+        board.ongridhover = grid => document.title = grid.crd;
         board.ongridclick = function (grid) {
             var sym = turn % 2 == 0 ? "X" : "O";
             if (grid._.symbol != "") {
