@@ -41,10 +41,10 @@ class ViewableBoard extends Board {
                     this.grids[crd].x = x * (gridSize + 1);
                     this.grids[crd].y = y * (gridSize + 1);
                     this.grids[crd].setStatus = function (statusName, status) {
-                        this.setStatusToGrid(statusName, status, this.grids[crd]);
+                        this.setStatusToGrid(statusName, this.grids[crd], status);
                     }.bind(this);
                     this.grids[crd].getStatus = function (statusName) {
-                        this.getStatusFromGrid(statusName, this.grids[crd]);
+                        return this.getStatusFromGrid(statusName, this.grids[crd]);
                     }.bind(this);
                 }).bind(this)(i, j);
         this.view = view;
@@ -122,7 +122,7 @@ class ViewableBoard extends Board {
     getStatusFromGrid(statusName, grid) {
         return grid._[statusName];
     }
-    setStatusToGrid(statusName, status, grid) {
+    setStatusToGrid(statusName, grid, status) {
         grid._[statusName] = status;
         this.refresh();
     }
