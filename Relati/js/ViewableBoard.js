@@ -105,7 +105,7 @@ class ViewableBoard extends Board {
                     status = this.grids[crd]._[statusName],
                     grid = this.grids[crd];
                 if (this._.gridMark[statusName] && this._.gridMark[statusName][status])
-                    this._.gridMark[statusName][status](this.painter, this.gridSize - 1, grid.x, grid.y);
+                    this._.gridMark[statusName][status](this.painter, this.gridSize - 1, grid.x, grid.y, grid);
             }
     }
     clean() {
