@@ -50,7 +50,8 @@ var board = new ViewableBoard(11, 11), //board為新的可見棋盤，大小為1
         if (board.record.length == board.width * board.height) //棋盤滿時
             gameResult = "draw"; //判為平手
         if (gameResult) { //遊戲有結果時
-            //board.clean(); //清除棋盤
+            if (confirm(gameResult)
+                board.clean(); //清除棋盤
             console.log(gameResult);
         }
     };
