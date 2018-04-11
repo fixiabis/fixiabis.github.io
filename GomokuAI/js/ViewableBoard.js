@@ -46,7 +46,7 @@ class ViewableBoard extends GridBoard {
                             }
                         }
                     }.bind(this));
-                    view.addEventListener("mouseover", function (event) {
+                    view.addEventListener("mousemove", function (event) {
                         var pX = event.offsetX,
                             pY = event.offsetY;
                         if (

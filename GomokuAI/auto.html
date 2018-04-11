@@ -29,6 +29,14 @@
                 if (player.piece != "B")
                     turnToComputer(player.piece);
             }
+            var time = setInterval(function () {
+                if (board.getGridByCrd("F6")._.piece == "")
+                    board.clickGrid("F6");
+                else
+                    turnToComputer("B");
+                var rn = () => ((Math.random() * 8) + 8 | 0).toString(16);
+                document.body.style.background = "#" + rn() + rn() + rn() + rn() + rn() + rn();
+            }, 1);
         })();
     </script>
 </body>
