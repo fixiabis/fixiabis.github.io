@@ -99,6 +99,7 @@ function turnToComputer(piece, once) {
         //console.log(piece, "方", "附近放放");
         return board.clickGrid(randomCrd(nearCrds));
     }
+    if (!spaceCrds.length) return;
     //console.log(piece, "方", "隨便放放");
     return board.clickGrid(randomCrd(spaceCrds));
 }
