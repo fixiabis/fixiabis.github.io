@@ -26,8 +26,6 @@
             var gridClick = board.ongridclick;
             board.ongridclick = function (grid) {
                 gridClick(grid);
-                if (confirm(gameResult))
-                    board.clean(); //清除棋盤
                 if (player.piece != "B")
                     turnToComputer(player.piece);
             }
