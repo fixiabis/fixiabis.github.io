@@ -43,12 +43,13 @@
                     socket.emit("setPiece", 5, 5);
                 } else {
                     board.clickGrid(String.fromCharCode(x + 65) + (y + 1));
-                    turnToComputer(ownPiece);
-                    var computerCrd = board.record[board.record.length - 1];
-                    var computerGrid = board.grids[computerCrd],
-                        x = computerGrid.getColName().charCodeAt() - 65,
-                        y = computerGrid.getRowName() - 1;
-                    socket.emit("setPiece", x, y);
+                    var computerCrd = turnToComputer(ownPiece);
+                    if (computerCrd) {
+                        var computerGrid = board.grids[computerCrd],
+                            x = computerGrid.getColName().charCodeAt() - 65,
+                            y = computerGrid.getRowName() - 1;
+                        socket.emit("setPiece", x, y);
+                    }
                 }
             });
         })();

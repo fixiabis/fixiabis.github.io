@@ -30,6 +30,7 @@
                     turnToComputer(player.piece);
             }
             var time = setInterval(function () {
+                if (player.winner) board.clean();
                 if (board.getGridByCrd("F6")._.piece == "")
                     board.clickGrid("F6");
                 else

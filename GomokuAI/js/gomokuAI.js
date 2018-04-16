@@ -88,17 +88,23 @@ function turnToComputer(piece, once) {
                     "防四且防雙", "防四",
                     "雙三", "防雙"
                 ][i]); */
-            return board.clickGrid(randomCrd(placeOrder[i]));
+            var gridCrd = randomCrd(placeOrder[i]);
+            board.clickGrid(gridCrd);
+            return gridCrd;
         }
     }
-
     var lastRecordCrd = board.record[board.record.length - 1],
         nearCrds = board.grids[lastRecordCrd].getCrdsByRelCrd("O");
     nearCrds = nearCrds.filter(crd => board.grids[crd] && board.grids[crd]._.piece == "");
     if (nearCrds.length > 0) {
         //console.log(piece, "方", "附近放放");
-        return board.clickGrid(randomCrd(nearCrds));
+        var gridCrd = randomCrd(nearCrds);
+        board.clickGrid(gridCrd);
+        return gridCrd;
     }
     //console.log(piece, "方", "隨便放放");
-    return board.clickGrid(randomCrd(spaceCrds));
+    if (spaceCrds.length == 0) return "";
+    var gridCrd = randomCrd(spaceCrds);
+    board.clickGrid(gridCrd);
+    return gridCrd;
 }

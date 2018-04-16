@@ -51,6 +51,7 @@ var board = new ViewableBoard(11, 11), //board為新的可見棋盤，大小為1
             gameResult = "draw"; //判為平手
         if (gameResult) { //遊戲有結果時
             //board.clean(); //清除棋盤
+            player.winner = !player.winner ? "D" : player.winner;
             console.log(gameResult);
         }
     };
