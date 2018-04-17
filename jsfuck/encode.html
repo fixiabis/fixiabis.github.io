@@ -33,7 +33,21 @@
     <script>
         var text = document.querySelector("#a"),
             textarea = document.querySelector("#b");
-        function enFuck(content) {
+        window.onkeydown = function (event) {
+            if (event.which == 9) {
+                event.preventDefault();
+                var content = text.value,
+                    start = text.selectionStart,
+                    end = text.selectionEnd;
+                if (start != end) return;
+                var fContent = content.substr(0, start),
+                    bContent = content.substr(start, content.length);
+                text.value = fContent + "    " + bContent;
+                text.selectionStart = start + 4;
+                text.selectionEnd = start + 4;
+            }
+        };
+        function enFuck(content, tabs) {
             var enContent = "";
             for (var i = 0; i < content.length; i++) {
                 if (!fromCharCode[content[i]])
@@ -42,17 +56,32 @@
                     enContent += code[content[i]];
                 else
                     enContent += fromCharCode[content[i]];
-                if (i < content.length - 1) enContent += "+\n";
+                if (i < content.length - 1) enContent += "+\n" + tabs;
             }
             return enContent;
         }
         text.oninput = function () {
+            if (this.value[0] == "\"") return;
             var enString = "",
-                content = this.value.match(/[^\"]+/g);
+                content = this.value.replace(/\"\"/g, "[]+[]").match(/[^\"]+/g);
             for (var i = 0; i < content.length; i++) {
                 if (i % 2 == 0) enString += content[i];
-                else enString += enFuck(content[i]);
+                else {
+                    var tabs = "";
+                    if (content[i - 1].length > 0) {
+                        var lines = content[i - 1].split("\n"),
+                            lastLine = lines[lines.length - 1],
+                            spaceMatch = lastLine.match(/ /g);
+                        if (spaceMatch.length == lastLine.length)
+                            tabs = lastLine;
+                    }
+                    enString += enFuck(content[i], tabs);
+                };
             }
+            var nums = enString.match(/[0-9]+\.[0-9]+|[0-9]+/g);
+            if (nums)
+                for (var i = 0; i < nums.length; i++)
+                    enString = enString.replace(nums[i], getNum(nums[i]));
             textarea.value = enString;
         }
         function getNum(v) {
@@ -62,15 +91,17 @@
                 var val = "";
                 if (v[i] == 0)
                     val = "+[]";
+                else if (v[i] == ".")
+                    val = "__$((+!![]+!![]+!![]+!![]+[]+(+!![]+!![]+!![]+!![]+!![]+!![])))";
                 else
                     for (var j = 0; j < v[i]; j++)
                         val += "+!![]";
                 if (i != 0)
                     result += `+(${val})`;
                 else
-                    result += val + "+[]"
+                    result += val + (v.length != 1 ? "+[]" : "");
             }
-            return `(${result})`;
+            return v.length != 1 ? `(+(${result}))` : result;
         }
     </script>
 </body>
