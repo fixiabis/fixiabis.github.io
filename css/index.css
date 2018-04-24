@@ -61,7 +61,7 @@ header .big-title {
 
 #hello::after {
     display: block;
-    content: "I'm fixiabis";
+    content: "I'm Fixiabis";
     line-height: 50px;
     width: 220px;
     overflow: hidden;
