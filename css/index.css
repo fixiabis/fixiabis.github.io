@@ -11,6 +11,7 @@ header {
     height: 160px;
     overflow: hidden;
     position: relative;
+    animation: show-header 4s;
 }
 
 header div {
@@ -21,58 +22,134 @@ header div {
     transition: all 0.5s;
 }
 
-header .transformShape {
-    transform: skewX(71deg) rotateZ(-185deg) translate(114px, 14px);
+header .transform-shape {
+    width: 160px;
+    height: 160px;
+    transform: scale(4) rotateZ(80deg) translate(-64px, -60px);
 }
 
-header .bigTitle {
-    background: transparent;
-    line-height: 140px;
-    text-indent: 140px;
-    font-size: 40px;
+header .big-title {
     font-family: monospace;
-    width: 50%;
-    height: 100%;
+    font-size: 30px;
+    line-height: 110px;
+    text-indent: 30px;
+    background: transparent;
 }
 
-@media screen and (max-width: 1600px) {
+#hello {
+    color: #eee;
+    font-family: monospace;
+    font-size: 30px;
+    width: 340px;
+    height: 50px;
+    position: absolute;
+    top: calc((100% - 50px) / 2);
+    left: calc((100% - 400px) / 2);
+    padding: 0px 30px;
+}
+
+#hello::before {
+    display: block;
+    content: "Hello,";
+    line-height: 50px;
+    width: 120px;
+    overflow: hidden;
+    float: left;
+    opacity: 0;
+    animation: show-hello-before 4s;
+}
+
+#hello::after {
+    display: block;
+    content: "I'm fixiabis";
+    line-height: 50px;
+    width: 220px;
+    overflow: hidden;
+    float: left;
+    opacity: 0;
+    animation: show-hello-after 4s;
+}
+
+@media screen and (max-width: 900px) {
     header div {
         height: 60px;
     }
-    header .bigTitle {
-        font-size: 35px;
-        line-height: 80px;
-        text-indent: 80px;
+    header .big-title {
+        line-height: 70px;
     }
-    header .transformShape {
-        transform: skewX(71deg) rotateZ(-185deg) translate(114px, 18px);
+    header .transform-shape {
+        transform: scale(4) rotateZ(80deg) translate(-70px, -60px);
     }
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 700px) {
     header div {
-        height: 40px;
+        height: 50px;
     }
-    header .bigTitle {
-        font-size: 30px;
-        line-height: 40px;
-        text-indent: 35px;
+    header .big-title {
+        line-height: 60px;
     }
-    header .transformShape {
-        transform: skewX(71deg) rotateZ(-185deg) translate(114px, 28px);
+    header .transform-shape {
+        transform: scale(4) rotateZ(80deg) translate(-73px, -60px);
     }
 }
 
-@media screen and (max-width: 1300px) {
-    header div {
-        height: 40px;
+@media screen and (max-width: 400px) {
+    header .big-title {
+        font-size: 25px;
+        text-indent: 0px;
+        text-align: center;
+        line-height: 50px;
     }
-    header .bigTitle {
-        font-size: 30px;
-        line-height: 40px;
-        text-indent: 35px;
+    header .transform-shape {
+        transform: scale(4) rotateZ(80deg) translate(-123px, -60px);
     }
-    header .transformShape {
-        transform: skewX(0deg) rotateZ(0deg) translate(0px, 0px);
+    #hello {
+        padding: 0px calc((100% - 340px) / 2);
+        left: 0px;
+    }
+}
+
+@media screen and (max-width: 340px) {
+    header {
+        animation: unset;
+    }
+    #hello {
+        display: none;
+    }
+}
+
+@keyframes show-header {
+    0% {
+        top: -160px;
+    }
+    75% {
+        top: -160px;
+    }
+    100% {
+        top: 0px;
+    }
+}
+
+@keyframes show-hello-before {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    25%,
+    75% {
+        opacity: 1;
+    }
+}
+
+@keyframes show-hello-after {
+    0%,
+    25%,
+    100% {
+        opacity: 0;
+    }
+    50%,
+    75% {
+        opacity: 1;
     }
 }
