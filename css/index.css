@@ -1,0 +1,78 @@
+html,
+body {
+    background: #222;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+}
+
+header {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+header div {
+    background: #eee;
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    transition: all 0.5s;
+}
+
+header .transformShape {
+    transform: skewX(71deg) rotateZ(-185deg) translate(114px, 14px);
+}
+
+header .bigTitle {
+    background: transparent;
+    line-height: 140px;
+    text-indent: 140px;
+    font-size: 40px;
+    font-family: monospace;
+    width: 50%;
+    height: 100%;
+}
+
+@media screen and (max-width: 1600px) {
+    header div {
+        height: 60px;
+    }
+    header .bigTitle {
+        font-size: 35px;
+        line-height: 80px;
+        text-indent: 80px;
+    }
+    header .transformShape {
+        transform: skewX(71deg) rotateZ(-185deg) translate(114px, 18px);
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    header div {
+        height: 40px;
+    }
+    header .bigTitle {
+        font-size: 30px;
+        line-height: 40px;
+        text-indent: 35px;
+    }
+    header .transformShape {
+        transform: skewX(71deg) rotateZ(-185deg) translate(114px, 28px);
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    header div {
+        height: 40px;
+    }
+    header .bigTitle {
+        font-size: 30px;
+        line-height: 40px;
+        text-indent: 35px;
+    }
+    header .transformShape {
+        transform: skewX(0deg) rotateZ(0deg) translate(0px, 0px);
+    }
+}
