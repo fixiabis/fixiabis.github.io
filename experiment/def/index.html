@@ -6,12 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
-    <script src="def.js"></script>
-    <script src="def-convert.js"></script>
+    <script src="dfn.js"></script>
+    <style>
+        div {
+            color: white;
+            background: black;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
 </head>
 
 <body>
+    <input type="text" />
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
     <script>
+        dfn("a")
+            .bindModel(document.querySelector("input"), "value")
+            .bindValue(document.querySelector("input"), "value")
+            .bindValue(document.querySelector("input").style, "color");
+        var divs = document.querySelectorAll("div");
+        for (var div of divs)
+            dfn("a").bindValue(div.style, "background");
+        dfn["a"] = "";
+        dfn.when(dfn("a"), "==", 5).then(function(){
+            alert(5);
+        });
     </script>
 </body>
 
