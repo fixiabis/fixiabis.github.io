@@ -37,17 +37,18 @@
 }
 
 #links {
+    font-family: monospace;
     width: 75%;
     height: 80%;
-    border: 1px solid #eee;
 }
 
 #links a {
     display: block;
     color: #eee;
+    font-size: 20px;
     text-indent: 20px;
     line-height: 50px;
-    width: 100px;
+    width: 100%;
     height: 50px;
 }
 
