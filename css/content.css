@@ -1,0 +1,52 @@
+#content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 80px);
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    animation: show-content 3s;
+}
+
+@media screen and (max-width: 900px) {
+    #content {
+        height: calc(100% - 60px);
+        top: 60px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #content {
+        height: calc(100% - 50px);
+        top: 50px;
+    }
+}
+
+@keyframes show-content {
+    0% {
+        opacity: 0;
+    }
+    75% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+#links {
+    width: 75%;
+    height: 80%;
+    border: 1px solid #eee;
+}
+
+#links a {
+    display: block;
+    color: #eee;
+    text-indent: 20px;
+    line-height: 50px;
+    width: 100px;
+    height: 50px;
+}
