@@ -31,6 +31,7 @@ header .big-title {
 
 #hello {
     color: #eee;
+    background: transparent;
     font-family: monospace;
     font-size: 30px;
     width: 340px;
@@ -39,28 +40,13 @@ header .big-title {
     top: calc((100% - 50px) / 2);
     left: calc((100% - 400px) / 2);
     padding: 0px 30px;
+    border: 0px;
+    transition: opacity 0.5s;
+    animation: hello 1s;
 }
 
-#hello::before {
-    display: block;
-    content: "Hello,";
-    line-height: 50px;
-    width: 120px;
-    overflow: hidden;
-    float: left;
-    opacity: 0;
-    animation: show-hello-before 3s;
-}
-
-#hello::after {
-    display: block;
-    content: "I'm Fixiabis";
-    line-height: 50px;
-    width: 220px;
-    overflow: hidden;
-    float: left;
-    opacity: 0;
-    animation: show-hello-after 3s;
+#hello:focus {
+    outline: none;
 }
 
 @media screen and (max-width: 900px) {
@@ -124,25 +110,9 @@ header .big-title {
     }
 }
 
-@keyframes show-hello-before {
-    0%,
-    100% {
+@keyframes hello {
+    0% {
         opacity: 0;
-    }
-    25%,
-    75% {
-        opacity: 1;
-    }
-}
-
-@keyframes show-hello-after {
-    0%,
-    25%,
-    100% {
-        opacity: 0;
-    }
-    50%,
-    75% {
-        opacity: 1;
+        transform: translateY(100%);
     }
 }

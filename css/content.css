@@ -7,7 +7,7 @@
     position: absolute;
     top: 80px;
     left: 0px;
-    animation: show-content 3s;
+    animation: show-content 1s;
 }
 
 @media screen and (max-width: 900px) {
@@ -27,12 +27,6 @@
 @keyframes show-content {
     0% {
         opacity: 0;
-    }
-    75% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
     }
 }
 
