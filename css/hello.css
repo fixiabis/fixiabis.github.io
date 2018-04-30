@@ -17,7 +17,7 @@ header div {
 header .transform-shape {
     width: 160px;
     height: 160px;
-    transform: scale(4) rotateZ(80deg) translate(-64px, -60px);
+    transform: scale(4) rotateZ(80deg) translate(-63px, -45px) skewY(-14deg);
 }
 
 header .big-title {
@@ -70,7 +70,7 @@ header .big-title {
         line-height: 70px;
     }
     header .transform-shape {
-        transform: scale(4) rotateZ(80deg) translate(-70px, -60px);
+        transform: scale(4) rotateZ(80deg) translate(-70px, -45px) skewY(-14deg);
     }
 }
 
@@ -82,7 +82,7 @@ header .big-title {
         line-height: 60px;
     }
     header .transform-shape {
-        transform: scale(4) rotateZ(80deg) translate(-73px, -60px);
+        transform: scale(4) rotateZ(80deg) translate(-73px, -45px) skewY(-14deg);
     }
 }
 
@@ -94,7 +94,7 @@ header .big-title {
         line-height: 50px;
     }
     header .transform-shape {
-        transform: scale(4) rotateZ(80deg) translate(-123px, -60px);
+        transform: scale(4) rotateZ(80deg) translate(-123px, -45px) skewY(-14deg);
     }
     #hello {
         padding: 0px calc((100% - 340px) / 2);

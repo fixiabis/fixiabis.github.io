@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
-    <script src="dfn.js"></script>
+    <script src="df.js"></script>
     <style>
         div {
             color: white;
@@ -18,25 +18,14 @@
 </head>
 
 <body>
-    <input type="text" />
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+    <input type="text" df-model="#a=value" df-value="#a=value=style.color" />
+    <div id="a" df-value="#a=style.background"></div>
+    <div id="b"></div>
     <script>
-        dfn("a")
-            .bindModel(document.querySelector("input"), "value")
-            .bindValue(document.querySelector("input"), "value")
-            .bindValue(document.querySelector("input").style, "color");
-        var divs = document.querySelectorAll("div");
-        for (var div of divs)
-            dfn("a").bindValue(div.style, "background");
-        dfn["a"] = "";
-        dfn.when(dfn("a"), "==", 5).then(function(){
-            alert(5);
-        });
+        df["a"] = "";
+        df.binds(
+            document.querySelectorAll("div"), "style", "display"
+        ).when(df("a"), "==", "hide div").then("none").else("");
     </script>
 </body>
 
