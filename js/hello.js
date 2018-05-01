@@ -5,6 +5,7 @@ var hello = document.getElementById("hello"),
     ];
 hello.focus();
 hello.value = "Hello, ";
+hello.selectionStart = 7;
 hello.addEventListener("keypress", function (event) { event.preventDefault(); })
 for (var i = 0; i < animation.length; i++)
     (function (i) {
