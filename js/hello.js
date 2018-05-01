@@ -1,10 +1,10 @@
 var hello = document.getElementById("hello"),
-    animation = "I'm fixiabis",
+    animation = "I'm Fixiabis",
     duration = [
         8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
     ];
 hello.focus();
-hello.value += " ";
+hello.value = "Hello, ";
 hello.addEventListener("keypress", function (event) { event.preventDefault(); })
 for (var i = 0; i < animation.length; i++)
     (function (i) {
