@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>three.js webgl - loaders - MMD loader</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			font-family: Monospace;
+			background-color: #fff;
+			color: #000;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		#info {
+			color: #000;
+			position: absolute;
+			top: 10px;
+			width: 100%;
+			text-align: center;
+			display: block;
+		}
+
+		#info a,
+		.button {
+			color: #f00;
+			font-weight: bold;
+			text-decoration: underline;
+			cursor: pointer
+		}
+
+		#progress-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: #fff;
+			font-size: 50px;
+			background: rgba(0, 0, 0, 0.5);
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+
+		#progress {
+			animation: blink 1s infinite;
+		}
+
+		@keyframes blink {
+			0% {
+				opacity: 0;
+			}
+		}
+	</style>
+	<script src="three.js"></script>
+
+	<script src="js/libs/mmdparser.min.js"></script>
+	<script src="js/libs/ammo.js"></script>
+
+	<script src="js/loaders/TGALoader.js"></script>
+	<script src="js/loaders/MMDLoader.js"></script>
+	<script src="js/effects/OutlineEffect.js"></script>
+	<script src="js/animation/CCDIKSolver.js"></script>
+	<script src="js/animation/MMDPhysics.js"></script>
+
+	<script src="js/controls/OrbitControls.js"></script>
+
+	<script src="js/Detector.js"></script>
+	<script src="js/libs/dat.gui.min.js"></script>
+	<style>
+		.button-container {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			width: 60px;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			z-index: 5;
+		}
+
+		#button-left {
+			left: 0px;
+		}
+
+		#button-right {
+			right: 0px;
+		}
+
+		.button {
+			background: #222;
+			width: 40px;
+			height: 80px;
+			margin: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="button-left" class="button-container">
+		<div class="button"></div>
+		<div class="button"></div>
+		<div class="button"></div>
+		<div class="button"></div>
+	</div>
+	<div id="button-right" class="button-container">
+		<div class="button"></div>
+		<div class="button"></div>
+		<div class="button"></div>
+		<div class="button"></div>
+	</div>
+	<div id="progress-container">
+		<div id="progress">loading...</div>
+	</div>
+	<script>
+		var container;
+
+		var mesh, camera, scene, renderer, effect;
+		var oldMesh, oldIkHelper, oldPhysicsHelper, oldRequestAnimationFrameID;
+		var helper, ikHelper, physicsHelper;
+
+		var mouseX = 0, mouseY = 0;
+
+		var windowHalfX = window.innerWidth / 2;
+		var windowHalfY = window.innerHeight / 2;
+
+		var clock = new THREE.Clock();
+
+		var progressCover = document.getElementById("progress");
+
+		init();
+		loadMMD('http://ob0qcsukh.bkt.clouddn.com/canvas/mmd2/models/role/kizunaai/kizunaai.pmx', [
+			'http://ob0qcsukh.bkt.clouddn.com/canvas/mmd2/models/vmd/snow.vmd'
+		]);
+		loadMMD('http://ob0qcsukh.bkt.clouddn.com/canvas/mmd2/models/role/kizunaai/kizunaai.pmx', [
+			'http://ob0qcsukh.bkt.clouddn.com/canvas/mmd2/models/vmd/elysion2.vmd'
+		], true);
+
+		function loadMMD(modelFile, vmdFiles, isLast) {
+			progressCover.parentNode.style.display = "";
+			var onProgress = function (xhr) {
+				if (xhr.lengthComputable) {
+					var percentComplete = xhr.loaded / xhr.total * 100;
+					Math.round(percentComplete, 2) + '%';
+				}
+			};
+
+			var onError = function (xhr) {
+			};
+
+			helper = new THREE.MMDHelper();
+
+			var loader = new THREE.MMDLoader();
+
+			loader.load(modelFile, vmdFiles, function (object) {
+				progressCover.parentNode.style.display = "none";
+				if (oldMesh) scene.remove(oldMesh);
+				mesh = object;
+				oldMesh = mesh;
+				mesh.position.y = -10;
+				scene.add(mesh);
+
+				helper.add(mesh);
+				helper.setAnimation(mesh);
+
+				/*
+				 * Note: create CCDIKHelper after calling helper.setAnimation()
+				 */
+				try {
+					if (oldIkHelper) scene.remove(oldIkHelper);
+					ikHelper = new THREE.CCDIKHelper(mesh);
+					oldIkHelper = ikHelper;
+					ikHelper.visible = false;
+					scene.add(ikHelper);
+				} catch (e) {
+
+				}
+
+				/*
+				 * Note: You're recommended to call helper.setPhysics()
+				 *       after calling helper.setAnimation().
+					 */
+				helper.setPhysics(mesh);
+				if (oldPhysicsHelper) scene.remove(oldPhysicsHelper);
+				physicsHelper = new THREE.MMDPhysicsHelper(mesh);
+				oldPhysicsHelper = physicsHelper;
+				physicsHelper.visible = false;
+				scene.add(physicsHelper);
+
+				helper.unifyAnimationDuration({ afterglow: 2.0 });
+				if (isLast)
+					animate();
+			}, onProgress, onError);
+		}
+
+		function init() {
+
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+			camera.position.z = 40;
+
+			// scene
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0xffffff);
+
+			var geometry = new THREE.PlaneBufferGeometry(200, 200, 20, 20);
+			var material = new THREE.MeshLambertMaterial({
+				color: 0xdddddd,
+				wireframe: true
+			});
+			plane = new THREE.Mesh(geometry, material);
+			plane.position.y = -10;
+			plane.rotation.x = -Math.PI / 2;
+			plane.receiveShadow = true;
+			scene.add(plane);
+
+			var ambient = new THREE.AmbientLight(0x666666);
+			scene.add(ambient);
+
+			var directionalLight = new THREE.DirectionalLight(0x887766);
+			directionalLight.position.set(-1, 1, 1).normalize();
+			scene.add(directionalLight);
+
+			//
+
+			renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			container.appendChild(renderer.domElement);
+
+			effect = new THREE.OutlineEffect(renderer);
+
+			// model
+
+			var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+			window.addEventListener('resize', onWindowResize, false);
+
+			var phongMaterials;
+			var originalMaterials;
+
+			function makePhongMaterials(materials) {
+
+				var array = [];
+
+				for (var i = 0, il = materials.length; i < il; i++) {
+
+					var m = new THREE.MeshPhongMaterial();
+					m.copy(materials[i]);
+					m.needsUpdate = true;
+
+					array.push(m);
+
+				}
+
+				phongMaterials = array;
+
+			}
+
+		}
+
+		function onWindowResize() {
+
+			windowHalfX = window.innerWidth / 2;
+			windowHalfY = window.innerHeight / 2;
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			effect.setSize(window.innerWidth, window.innerHeight);
+
+		}
+
+		//
+
+		function animate() {
+			requestAnimationFrame(animate);
+			render();
+		}
+
+		function render() {
+
+			helper.animate(clock.getDelta());
+			if (physicsHelper !== undefined && physicsHelper.visible) physicsHelper.update();
+			if (ikHelper !== undefined && ikHelper.visible) ikHelper.update();
+
+			effect.render(scene, camera);
+
+		}
+	</script>
+</body>
+
+</html>
