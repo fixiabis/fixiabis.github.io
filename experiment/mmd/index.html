@@ -133,6 +133,16 @@
 		var progressCover = document.getElementById("progress");
 
 		init();
+		document.querySelectorAll(".button")[0].onclick = function() {
+			loadMMD("model/Appearance%20Miku.pmx", [
+				'https://threejs.org/examples/models/mmd/vmds/wavefile_v2.vmd'
+			]);
+		};
+		document.querySelectorAll(".button")[1].onclick = function() {
+			loadMMD('https://threejs.org/examples/models/mmd/miku/miku_v2.pmd', [
+				'https://threejs.org/examples/models/mmd/vmds/wavefile_v2.vmd'
+			], true);
+		};
 		loadMMD('https://threejs.org/examples/models/mmd/miku/miku_v2.pmd', [
 			'https://threejs.org/examples/models/mmd/vmds/wavefile_v2.vmd'
 		], true);
