@@ -60,7 +60,7 @@
 
         .eye-black.main::before {
             display: block;
-            content: "我在世界的某處，看著你";
+            content: "";
             color: red;
             font-size: 16px;
             text-align: center;
@@ -69,7 +69,7 @@
             height: 200px;
             opacity: 0;
             transform: scale(100);
-            animation: show-text 2s;
+            animation: show-text 4s;
         }
 
         @keyframes blink {
@@ -88,14 +88,36 @@
 
         @keyframes show-text {
             0%,
-            70% {
+            35% {
+                opacity: 0;
+                transform: scale(1);
+                content: "我在世界的某處，看著你";
+            }
+            50% {
+                content: "我在世界的某處，看著你";
+                opacity: 1;
+                transform: scale(1);
+            }
+            62.5% {
+                content: "我在世界的某處，看著你";
                 opacity: 0;
                 transform: scale(1);
             }
-            71%,
-            90% {
+            74% {
+                content: "嘻嘻嘻嘻";
+                opacity: 0;
+                transform: scale(1);
+            }
+            75%,
+            85% {
+                content: "嘻嘻嘻嘻";
                 opacity: 1;
                 transform: scale(1);
+            }
+            90% {
+                content: "嘻嘻嘻嘻";
+                opacity: 0;
+                transform: scale(100);
             }
         }
 
