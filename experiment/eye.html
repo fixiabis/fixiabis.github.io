@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Eye</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+        }
+
+        #eye-container {
+            background: #111;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #eye {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            top: calc((100% - 500px) / 2);
+            left: calc((100% - 500px) / 2);
+        }
+
+        #eye-white {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            animation: blink 2s;
+        }
+
+        #eye-white::after {
+            display: block;
+            content: "";
+            background: #eee;
+            width: 300px;
+            height: 300px;
+            border-radius: 5px;
+            border-top-left-radius: 300px;
+            border-bottom-right-radius: 300px;
+            transform: rotate(45deg);
+        }
+
+        #eye-black {
+            background: #111;
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: 150px;
+            left: 150px;
+            border-radius: 100px;
+        }
+
+        #eye-black::before {
+            display: block;
+            content: "你渴望力量嗎";
+            color: #eee;
+            text-align: center;
+            font-size: 20px;
+            line-height: 200px;
+            width: 200px;
+            height: 200px;
+            animation: show-text 2s;
+        }
+
+        @keyframes blink {
+            0%,
+            40%,
+            60% {
+                transform: scaleY(0);
+            }
+            20%,
+            39%,
+            50%,
+            70% {
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes show-text {
+            0%,
+            70% {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        @media screen and (max-width: 450px) {
+            #eye {
+                transform: scale(0.8);
+            }
+        }
+
+        @media screen and (max-width: 350px) {
+            #eye {
+                transform: scale(0.6);
+            }
+        }
+
+        @media screen and (max-width: 250px) {
+            #eye {
+                transform: scale(0.4);
+            }
+        }
+
+        @media screen and (max-width: 150px) {
+            #eye {
+                transform: scale(0.2);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="eye-container">
+        <div id="eye">
+            <div id="eye-white"></div>
+            <div id="eye-black"></div>
+        </div>
+    </div>
+</body>
+
+</html>
