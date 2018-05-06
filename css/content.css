@@ -6,17 +6,18 @@
 }
 
 #content>* {
+    box-sizing: border-box;
     color: #eee;
     font-family: monospace;
     font-size: 20px;
     line-height: 40px;
-    width: 235px;
+    width: 265px;
     padding: 0px 20px;
     border-right: 1px solid #eee;
 }
 
 #content>*:last-child {
-    border-right: 0px;
+    border: 0px;
 }
 #content a {
     color: #eee;
@@ -26,4 +27,17 @@
 
 #content a:focus {
     outline: none;
+}
+
+@media screen and (max-width: 800px) {
+    #content {
+        flex-direction: column;
+        width: 100%;
+        margin: 0px;
+    }
+    #content>* {
+        width: 100%;
+        border-right: 0px;
+        border-bottom: 1px solid #eee;
+    }
 }

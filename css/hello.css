@@ -62,12 +62,13 @@ header .big-title {
 }
 
 @media screen and (max-width: 700px) {
+    header,
     header div {
         height: 50px;
     }
     header .big-title {
-        line-height: 60px;
-    }
+        line-height: 50px;
+5   }
     header .transform-shape {
         transform: scale(4) rotateZ(80deg) translate(-73px, -45px) skewY(-14deg);
     }
