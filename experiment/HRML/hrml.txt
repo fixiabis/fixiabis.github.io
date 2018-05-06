@@ -1,0 +1,105 @@
+<html/
+	<head/
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+		<meta name="mobile-web-app-capable" content="yes">
+		<title/什麼是HRML?>
+		<style/
+			header{
+				height:40px;width:100%;
+				postion:fixed;top:0px;left:0px;
+				background-color:#000;text-align:center;
+				font-size:30px;line-height:40px;
+			}
+			body{
+				margin:0px;background-color:#222
+			}
+			section div,section{
+				border-radius:5px;background-color:#111;
+				padding:10px 10px;margin:10px 10px;
+			}
+			section div{background-color:#222;word-wrap:break-word;}
+			section code{font-size:16px}
+			section hr{border-color:lightblue}
+			header,section{letter-spacing:2px;color:lightblue;}
+		>
+	>
+	<body/
+		<header/HRML>
+		<section/
+			<font style="font-size:32px" %/說明與使用><hr>
+			HRML(HTML Reduced Markup Language)是一種簡化HTML格式的方法，只需要在你的網頁貼上：
+			<div/
+				<code/
+					&lt;script src=<font color="coral"/"https://fixiabis.github.io/HRML/Core.js">&gt;&lt;/script&gt;
+				>
+			>
+			載入的js，主要提供三個函數：
+			<#/
+				<code/
+					hrml(<font color="gold" %/{HRML格式文字}>) <font color="lime" %///傳回HTML格式><br>
+					hrmlw(<%2/{HRML格式文字}>) <%3///傳回HTML格式，並寫入文件中><br>
+					hrmlf(<%2/{檔案位址}>) <%3///以純文字方式讀取檔案，並寫入文件中>
+				>
+			>
+		>
+		<#/
+			<%1/格式說明><hr>
+			HTML，以table標籤為例：
+			<div/
+				<code/
+					<font/&lt;table&gt;><br>
+					<font style="margin-left:32px" %/&lt;tr&gt;><br>
+					<font style="margin-left:64px" %/
+						&lt;td class=<font color="coral" %/"t"> id=<%6/"t1"> name=<%6/"a">&gt;<%2/內容a>&lt;/td&gt;
+					><br>
+					<%5/
+						&lt;td class=<%6/"t"> id=<%6/"t2"> name=<%6/"a">&gt;<%2/內容b>&lt;/td&gt;
+					><br>
+					<%5/
+						&lt;td class=<%6/"s"> id=<%6/"t3"> name=<%6/"a">&gt;<%2/內容c>&lt;/td&gt;
+					><br>
+					<%4/&lt;/tr&gt;><br>
+					<%4/&lt;tr&gt;><br>
+					<%5/
+						&lt;td class=<%6/"t"> id=<%6/"t4"> name=<%6/"b">&gt;<%2/內容d>&lt;/td&gt;
+					><br>
+					<%5/
+						&lt;td class=<%6/"s"> name=<%6/"b">&gt;<%2/內容e>&lt;/td&gt;
+					><br>
+					<%5/
+						&lt;td class=<%6/"s"> name=<%6/"b">&gt;<%2/內容f>&lt;/td&gt;
+					><br>
+					<%4/&lt;/tr&gt;><br>
+					<font/&lt;/table&gt;>
+				>
+			>
+			HRML，以table標籤為例：
+			<#/
+				<code/
+					<font/&lt;table/><br>
+					<%4/&lt;tr/><br>
+					<%5/
+						&lt;td class=<%6/"t"> id=<%6/"t1"> name=<%6/"a"> %/<%2/內容a>&gt;
+					><br>
+					<%5/&lt;~ &1 id=<%6/"t2"> &3/<%2/內容b>&gt;><br>
+					<%5/
+						&lt;~ class=<%6/"s"> id=<%6/"t3"> &3/<%2/內容c>&gt;
+					><br>
+					<%4/&gt;><br>
+					<%4/&lt;#/><br>
+					<%5/&lt;%1 &1 id=<%6/"t4"> name=<%6/"b">/<%2/內容d>&gt;><br>
+					<%5/&lt;~ class=<%6/"s"> &3/<%2/內容e>&gt;><br>
+					<%5/&lt;~/<%2/內容f>&gt;><br>
+					<%4/&gt;><br>
+					<font/&gt;>
+				>
+			>
+			特殊標記分別如下：<br>
+			　　&lt;~&gt;(紀錄複製)：複製上一個標籤<br>
+			　　&lt;#&gt;(同階複製)：複製同階上一個標籤<br>
+			　　&lt;%&gt;(標記複製)：複製指定標籤<br>
+				以上三種若後面無屬性時，將複製所有屬性，可複製部分屬性，只需要在後面打上&1就可以複製該標籤的第一個屬性。
+		>
+	>
+>
