@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>未知法則</title>
+    <style>
+        @font-face {
+            font-family: NotoSans;
+            src: url(font/NotoSansCJKtc-Thin.otf);
+        }
+
+        * {
+            color: #eee; /*文字顏色*/
+            font-family: NotoSans;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background: #111; /*背景顏色*/
+            margin: 0px;
+            transition: opacity 0.5s;
+        }
+
+        header,
+        section {
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        section {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+
+        section section {
+            padding-bottom: 0px;
+        }
+
+        .introduce-content {
+            font-size: 25px;
+            padding: 10px
+        }
+
+        .main-content {
+            font-size: 20px;
+            padding: 10px 20px;
+        }
+
+        [type=checkbox] {
+            display: none;
+        }
+
+        [type=checkbox]~* {
+            display: none;
+        }
+
+        [type=checkbox]:checked~* {
+            display: block;
+            animation: show 1s;
+        }
+
+        @keyframes show {
+            0% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <canvas width="300" height="60"></canvas>
+    </header>
+    <section class="introduce-content">＊關於「管理機構」：
+        <br>主要有兩大部門和獨立出來的監獄，及堪稱舉足輕重的兩大設施。
+    </section>
+    <section class="main-content">
+        <label for="a">＃研究部門</label>
+        <input type="checkbox" id="a" />
+        <section>負責研究異能的產生與運作模式，並試圖找出消除異能的手段。
+            <br>下轄：隕石科、異能科、檢驗科、器材科、保修科……
+        </section>
+        <section>
+            <label for="a1">隕石科</label>
+            <input type="checkbox" id="a1" />
+            <section>負責研究隕石中令人類產生異能的特異成分，並嘗試將此成分無害化。
+                <br>下轄：隕石採樣課、隕石分析課、隕石研究課……
+            </section>
+        </section>
+        <section>
+            <label for="a2">異能科</label>
+            <input type="checkbox" id="a2" />
+            <section>負責研究異能者的生理特性，並嘗試找出消除異能的方法。
+                <br>下轄：異能消除課、異能者分析課、異能研究課……
+            </section>
+        </section>
+        <section>
+            <label for="a3">檢驗科</label>
+            <input type="checkbox" id="a3" />
+            <section>負責處理研究部裡所有的檢驗項目。
+                <br>下轄：生物檢驗課、環境檢驗課……
+            </section>
+        </section>
+        <section>
+            <label for="a4">器材科</label>
+            <input type="checkbox" id="a4" />
+            <section>負責開發用於對抗異能者的器械與裝備。
+                <br>下轄：護具課、冷兵器課、人身部品課、熱兵器課、載具課……
+            </section>
+        </section>
+        <section>
+            <label for="a5">後勤科</label>
+            <input type="checkbox" id="a5" />
+            <section>負責供應與維修研發部的各項器材與耗材。
+                <br>下轄：機敏器材課、一般器材課、耗材課、實驗動物課……
+            </section>
+        </section>
+    </section>
+    <section class="main-content">
+        <label for="b">＃管理部門</label>
+        <input type="checkbox" id="b" />
+        <section>
+            負責讓「特政區」維持正常運作，是「特政區」的指揮與管理單位。
+            <br>下轄：會計部、人事部、交通部、環保部、行政部、司法部、監察部、食糧部、器材部、島防部……
+        </section>
+        <section>
+            <label for="b1">總務部</label>
+            <input type="checkbox" id="b1" />
+            <section>負責向各國提出「特政區」的年預算，還有個部門的預算分配。採買「特政區」所需食物與用品。
+                <br>下轄：食糧科（統計區內食物生產總量向總務部提出不足的份量。）、器材科（維護區內一切器材。向總務部申請必須器材）。
+            </section>
+        </section>
+        <section>
+            <label for="b2">人事部</label>
+            <input type="checkbox" id="b2" />
+            <section>處理一切人事調動。記錄「特政區」人民資料與統計。</section>
+        </section>
+        <section>
+            <label for="b3">交通部</label>
+            <input type="checkbox" id="b3" />
+            <section>負責「特政區」道路規劃與維修，保養出島所需工具。</section>
+        </section>
+        <section>
+            <label for="b4">環保部</label>
+            <input type="checkbox" id="b4" />
+            <section>管理「特政區」發電廠與水庫，有必要時會限制電與水的使用及垃圾清理。</section>
+        </section>
+        <section>
+            <label for="b5">行政部</label>
+            <input type="checkbox" id="b5" />
+            <section>負責傳達各國對「特政區」法令與執行。辦理定期身體檢查。</section>
+        </section>
+        <section>
+            <label for="b6">司法部</label>
+            <input type="checkbox" id="b6" />
+            <section>負責一切犯罪事件，與犯人監禁。
+                <br>下轄：監獄科、檢察科……
+            </section>
+            <section>
+                <label for="b61">檢察科</label>
+                <input type="checkbox" id="b61" />
+                <section>負責調查島上居民的犯罪事件，具有要求島防部協助調查與追捕的權限。
+                    <br>下轄：檢察處、法警處、採證暨分析處……
+                </section>
+            </section>
+        </section>
+        <section>
+            <label for="b7">監察部</label>
+            <input type="checkbox" id="b7" />
+            <section>定期檢查各部門的運作情形，如有不當的人員，記滿三支大過撤職（如是特異者則變回住民，如是普通人則送出島）。</section>
+        </section>
+        <section>
+            <label for="b8">島防部</label>
+            <input type="checkbox" id="b8" />
+            <section>「特政區」的安全防護，當「特政區」受到外來攻擊會組成自衛隊。</section>
+        </section>
+    </section>
+    <section class="main-content">
+        <label for="c">＃監獄</label>
+        <input type="checkbox" id="c" />
+        <section>下轄於司法部，對監獄與囚犯進行管理的單位。
+            <br>下轄：囚犯管理處、武裝獄警處、一般獄警處、後勤配給處、監獄管理處……
+        </section>
+        <section>管理範圍為第七區與第八區，幾乎是完全自治。
+            <br>一區有五棟監獄，最靠近管理機構的第一棟關的是重罪與天災級的特異者，二到四棟是普通監獄，五棟只是拘留所。
+            <br>犯人在獄中的活動跟在其他區一樣，而整區幾乎無法使用異能。
+        </section>
+    </section>
+    <script>
+        document.body.style.opacity = 0;
+        window.addEventListener("load", function () {
+            var canvas = document.querySelector("canvas"),
+                painter = canvas.getContext("2d");
+            painter.setTransform(1, 0, 0, 1, 0.5, 0.5); //繪圖變形(不建議修改)
+            painter.fillStyle = "#eee"; //文字顏色
+            var text = "未 知 法 則"; //文字標題(不建議修改)
+            painter.font = "40px NotoSans"; //文字字形(不建議修改)
+            painter.fillText(text, (300 - painter.measureText(text).width) / 2, 45);
+            var diamond = function (x, y, w, h) { //菱形裝飾(不建議修改)
+                painter.beginPath();
+                painter.moveTo(x, y);
+                painter.lineTo(x + w, y + h);
+                painter.lineTo(x, y + 2 * h);
+                painter.lineTo(x - w, y + h);
+                painter.closePath();
+                painter.fill();
+            };
+            diamond(77, 9, 2, 5);
+            diamond(110, 28.25, 5, 2);
+            diamond(180, 10, 2, 5);
+            diamond(238.5, 10, 2, 5);
+            document.body.style.opacity = 1;
+        })
+    </script>
+</body>
+
+</html>
