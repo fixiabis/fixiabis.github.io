@@ -29,26 +29,6 @@
         .scale-fade-io-view {
             background: #333;
         }
-
-        #scroll-to-view {
-            color: #eee;
-            font-size: 16px;
-            text-align: center;
-            line-height: 30px;
-            width: 120px;
-            height: 30px;
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            z-index: 100;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0% {
-                opacity: 0;
-            }
-        }
     </style>
     <script src="circle progress/js/createElement.js"></script>
     <script src="circle progress/js/circle.js"></script>
@@ -56,13 +36,11 @@
 </head>
 
 <body>
-    <div id="scroll-to-view">Scroll to view</div>
     <div class="scale-fade-io-container"></div>
     <script>
         var circle = new Circle(),
             scaleFadeIOContainer = document.querySelector(".scale-fade-io-container");
         scaleFadeIOContainer.style.background = "#eee";
-        document.querySelector("#scroll-to-view").style.color = "#111";
         document.body.appendChild(scaleFadeIOContainer);
         setAttrs.bind(circle)({
             container: scaleFadeIOContainer,
@@ -86,7 +64,6 @@
                 this.lineColor = "#eee";
                 this.fontColor = "#eee";
                 this.background = "#222";
-                document.querySelector("#scroll-to-view").style.color = "";
                 scaleFadeIOContainer.style.transition = "background 1s";
                 scaleFadeIOContainer.style.background = "";
                 setTimeout(function () {
