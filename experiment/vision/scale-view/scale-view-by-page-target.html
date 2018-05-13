@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <style>
+        @import "scale-view.css";
+
+        .scale-view>[id^=p]:target~[id^=p] {
+            transform: scale(0);
+        }
+
+        .scale-view>[id^=p]:target {
+            transform: scale(1);
+            opacity: 1;
+            /*頁面顯示*/
+        }
+
+        .scale-view>[id^=p] {
+            transform: scale(2);
+            opacity: 0;
+            /*放大淡出*/
+        }
+
+        #p1:target~div>#s1,
+        #p2:target~div>#s2,
+        #p3:target~div>#s3,
+        #p4:target~div>#s4,
+        #p5:target~div>#s5 {
+            color: #333;
+            background: #eee;
+            /*預設標記*/
+        }
+
+        #p2:target~div>#s1,
+        #p3:target~div>#s2,
+        #p4:target~div>#s3,
+        #p5:target~div>#s4 {
+            color: #eee;
+            background: transparent;
+            /*頁面標記*/
+        }
+    </style>
+</head>
+
+<body>
+    <div class="scale-view">
+        <div id="p1">
+            page1,
+            <a href="#p2">next</a>
+        </div>
+        <div id="p2">
+            page2,
+            <a href="#p1">prev</a>
+            <a href="#p3">next</a>
+        </div>
+        <div id="p3">
+            page3,
+            <a href="#p2">prev</a>
+            <a href="#p4">next</a>
+        </div>
+        <div id="p4">
+            page4,
+            <a href="#p3">prev</a>
+            <a href="#p5">next</a>
+        </div>
+        <div id="p5">
+            page5,
+            <a href="#p4">prev</a>
+        </div>
+        <div id="scale-view-nav">
+            <a id="s1" href="#p1">1</a>
+            <a id="s2" href="#p2">2</a>
+            <a id="s3" href="#p3">3</a>
+            <a id="s4" href="#p4">4</a>
+            <a id="s5" href="#p5">5</a>
+        </div>
+    </div>
+</body>
+
+</html>
