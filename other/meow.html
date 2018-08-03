@@ -75,7 +75,7 @@
             <div>!</div>
             <div>?</div>
             <div>~</div>
-            <div id="clear">清除</div>
+            <div> </div>
         </div>
         <div id="output"></div>
     </div>
@@ -87,79 +87,95 @@
 
         for (var i = 0; i < buttons.length; i++) {
             var button = buttons[i];
-            if (button.id === "clear") continue;
             button.addEventListener("click", function () {
                 input.innerHTML += this.innerHTML;
+
                 output.innerHTML = translate(input.innerHTML);
+
+                if (output.innerHTML === "") input.innerHTML = "";
             });
         }
 
-        clearButton.addEventListener("click", function () {
-            input.innerHTML = "";
-            output.innerHTML = "";
-        });
-
         function translate(content) {
             switch (content) {
-                case ".": return "有人嗎";
-
-                case ".!": return "你";
-                case ".?": return "你要幹嘛?";
-                case ".~": return "你好~";
-
-                case "..": return "我";
-
-                case "..!": return "我不要!";
-                case "..?": return "我嗎?";
-                case "..~": return "我開心";
-
+                case ".": return "有人嗎?";
                 case "...": return "呃...";
-
-                case "...?": return "真的?";
-                case "...!": return "居然!";
-                case "...~": return "嗯哼~";
-
                 case "......": return "唉...";
                 case ".........": return "好難過...";
-
                 case "!": return "不要!";
-
-                case "!.": return "不要過來!";
-                case "!..": return "不要過去!";
-                case "!...": return "假的!";
-                case "!?": return "現在啥情形?";
-                case "!~": return "不會~";
-
                 case "!!": return "不是吧!";
-
                 case "!!!": return "不要啊啊啊!";
-
-                case "!!!.": return "警告你";
-
-                case "?": return "為啥?";
-
-                case "?.": return "過去?";
-                case "?..": return "過來?";
-                case "?...": return "原來嗎?";
+                case "!?": return "現在什麼情況?";
+                case "!~": return "不會~";
+                case "?": return "什麼?";
+                case "??": return "為什麼?";
+                case "???": return "什麼鬼?";
                 case "?!": return "哪有啦亂講!";
                 case "?~": return "哪有~";
-
-                case "??": return "啥?";
-                case "???": return "啥鬼?";
-
-                case "~": return "好哦";
-
-                case "~.": return "好啊你";
-                case "~..": return "又我了";
-                case "~...": return "好哦...";
-                case "~!": return "好棒!";
-                case "~?": return "開心?";
-
-                case "~~": return "嘿嘿~";
+                case "~": return "嘿嘿~";
+                case "~~": return "好哦~";
                 case "~~~": return "好開心~";
-
-                default: return "";
+                case "~?": return "是嗎?";
+                case "~!": return "好哦!";
             }
+
+            var contents = content.split(" ");
+            var result = "";
+
+            for (var i = 0; i < contents.length; i++) {
+                switch (contents[i]) {
+                    case ".": result += "你"; break;
+
+                    case ".!": result += "做"; break;
+                    case ".?": result += "有"; break;
+                    case ".~": result += "好"; break;
+
+                    case "..": result += "我"; break;
+                    case "...": result += "思考"; break;
+                    case "....": result += "無聊"; break;
+
+                    case "...!": result += "居然"; break;
+                    case "...?": result += "真的"; break;
+                    case "...~": result += "很"; break;
+
+                    case "......": result += "麻煩"; break;
+                    case ".........": result += "難過"; break;
+
+                    case "!": result += "要"; break;
+                    case "!!": result += "是"; break;
+                    case "!!!": result += "不是"; break;
+
+                    case "!...": result += "假的"; break;
+                    case "!?": result += "事情"; break;
+                    case "!??": result += "地方"; break;
+                    case "!~": result += "不會"; break;
+
+                    case "?": result += "什麼"; break;
+                    case "??": result += "時間"; break;
+                    case "???": result += "東西"; break;
+
+                    case "?.": result += "那個"; break;
+                    case "?..": result += "這個"; break;
+                    case "?...": result += "原來"; break;
+                    case "?!": result += "混亂"; break;
+                    case "?~": result += "哪個"; break;
+
+                    case "~": result += "正在"; break;
+                    case "~~": result += "想"; break;
+                    case "~~~": result += "覺得"; break;
+
+                    case "~.": result += "過去"; break;
+                    case "~..": result += "過來"; break;
+                    case "~...": result += "沒"; break;
+                    case "~!": result += "驚訝"; break;
+                    case "~?": result += "開心"; break;
+
+                    case "": break;
+                    default: return "";
+                }
+            }
+
+            return result;
         }
     </script>
 </body>
