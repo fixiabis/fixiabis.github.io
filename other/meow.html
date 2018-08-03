@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            user-select: none;
+            color: #eef;
+            background-color: #222;
+            margin: 0px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #buttons div {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            border-style: solid;
+            border-width: 2px;
+            border-radius: 5px;
+            margin: 5px;
+            box-sizing: border-box;
+            transition: all 0.5s;
+        }
+
+        #buttons div:active {
+            transform: scale(0.8);
+        }
+
+        #input,
+        #output {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 20px;
+            width: 290px;
+            height: 50px;
+            padding: 5px;
+            border-style: solid;
+            border-width: 2px;
+            border-radius: 5px;
+            margin: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="input"></div>
+        <div id="buttons">
+            <div>.</div>
+            <div>!</div>
+            <div>?</div>
+            <div>~</div>
+            <div id="clear">清除</div>
+        </div>
+        <div id="output"></div>
+    </div>
+    <script>
+        var input = document.getElementById("input");
+        var buttons = document.querySelectorAll("#buttons div");
+        var clearButton = document.getElementById("clear")
+        var output = document.getElementById("output");
+        buttons.forEach(function (button) {
+            if (button.id === "clear") return;
+            button.addEventListener("click", function () {
+                input.innerHTML += this.innerHTML;
+                output.innerHTML = translate(input.innerHTML);
+            });
+        });
+
+        clearButton.addEventListener("click", function () {
+            input.innerHTML = "";
+            output.innerHTML = "";
+        })
+
+        function translate(content) {
+            switch (content) {
+                case ".": return "有人嗎";
+                case "..": return "我";
+                case ".!": return "你在這!";
+                case ".?": return "你在喔?";
+                case ".~": return "你好~";
+
+                case "...": return "呃...";
+                case "......": return "唉...";
+                case ".........": return "好難過...";
+                case "...?": return "真的?";
+                case "...!": return "居然!";
+                case "...~": return "欸嘿~";
+
+                case "!": return "不要!";
+                case "!!": return "不是吧!";
+                case "!!!": return "不要啊啊啊!";
+                case "!?": return "現在啥情形?";
+                case "!~": return "並不會~";
+                case "!...": return "假的!";
+
+                case "?": return "為啥?";
+                case "??": return "啥?";
+                case "???": return "啥鬼?";
+                case "?~": return "哪有啦~";
+                case "?!": return "哪有啦亂講!";
+                case "?...": return "原來嗎?";
+
+                case "~": return "好哦";
+                case "~~": return "嘿嘿~";
+                case "~~~": return "好開心~";
+                case "~!": return "好哦不對啦!";
+                case "~?": return "好哦確定嗎?";
+                case "~...": return "好哦..."
+
+                default: return "";
+            }
+        }
+    </script>
+</body>
+
+</html>
