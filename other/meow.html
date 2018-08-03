@@ -103,16 +103,14 @@
             switch (content) {
                 case ".": return "有人嗎";
 
-                case ".!": return "你在這!";
-                case ".?": return "你不在?";
-                case ".!?": return "你要幹嘛?";
+                case ".!": return "你";
+                case ".?": return "你要幹嘛?";
                 case ".~": return "你好~";
-                
+
                 case "..": return "我";
 
                 case "..!": return "我不要!";
                 case "..?": return "我嗎?";
-                case "..!?": return "我不會";
                 case "..~": return "我開心";
 
                 case "...": return "呃...";
@@ -127,28 +125,31 @@
                 case "!!": return "不是吧!";
                 case "!!!": return "不要啊啊啊!";
 
-                case "!?": return "現在啥情形?";
                 case "!.": return "不要過來!";
-                case "!~": return "不會~";
+                case "!..": return "不要過去!";
                 case "!...": return "假的!";
+                case "!?": return "現在啥情形?";
+                case "!~": return "不會~";
 
                 case "?": return "為啥?";
                 case "??": return "啥?";
                 case "???": return "啥鬼?";
 
                 case "?.": return "過去?";
-                case "?~": return "哪有啦~";
-                case "?!": return "哪有啦亂講!";
+                case "?..": return "過來?";
                 case "?...": return "原來嗎?";
+                case "?!": return "哪有啦亂講!";
+                case "?~": return "哪有~";
 
                 case "~": return "好哦";
                 case "~~": return "嘿嘿~";
                 case "~~~": return "好開心~";
 
+                case "~.": return "好啊你";
+                case "~..": return "又我了";
+                case "~...": return "好哦...";
                 case "~!": return "好棒!";
                 case "~?": return "開心?";
-                case "~.": return "好啊你";
-                case "~...": return "好哦...";
 
                 default: return "";
             }
