@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>翻譯翻譯</title>
     <style>
         body {
             user-select: none;
@@ -82,46 +82,54 @@
     <script>
         var input = document.getElementById("input");
         var buttons = document.querySelectorAll("#buttons div");
-        var clearButton = document.getElementById("clear")
+        var clearButton = document.getElementById("clear");
         var output = document.getElementById("output");
-        buttons.forEach(function (button) {
-            if (button.id === "clear") return;
+
+        for (var i = 0; i < buttons.length; i++) {
+            var button = buttons[i];
+            if (button.id === "clear") continue;
             button.addEventListener("click", function () {
                 input.innerHTML += this.innerHTML;
                 output.innerHTML = translate(input.innerHTML);
             });
-        });
+        }
 
         clearButton.addEventListener("click", function () {
             input.innerHTML = "";
             output.innerHTML = "";
-        })
+        });
 
         function translate(content) {
             switch (content) {
                 case ".": return "有人嗎";
                 case "..": return "我";
+
                 case ".!": return "你在這!";
-                case ".?": return "你在喔?";
+                case ".?": return "你不在?";
                 case ".~": return "你好~";
 
                 case "...": return "呃...";
                 case "......": return "唉...";
                 case ".........": return "好難過...";
+
                 case "...?": return "真的?";
                 case "...!": return "居然!";
-                case "...~": return "欸嘿~";
+                case "...~": return "嗯哼~";
 
                 case "!": return "不要!";
                 case "!!": return "不是吧!";
                 case "!!!": return "不要啊啊啊!";
+
                 case "!?": return "現在啥情形?";
-                case "!~": return "並不會~";
+                case "!.": return "不要過來!";
+                case "!~": return "不會~";
                 case "!...": return "假的!";
 
                 case "?": return "為啥?";
                 case "??": return "啥?";
                 case "???": return "啥鬼?";
+
+                case "?.": return "過去?";
                 case "?~": return "哪有啦~";
                 case "?!": return "哪有啦亂講!";
                 case "?...": return "原來嗎?";
@@ -129,9 +137,11 @@
                 case "~": return "好哦";
                 case "~~": return "嘿嘿~";
                 case "~~~": return "好開心~";
-                case "~!": return "好哦不對啦!";
-                case "~?": return "好哦確定嗎?";
-                case "~...": return "好哦..."
+
+                case "~!": return "好棒!";
+                case "~?": return "開心?";
+                case "~.": return "";
+                case "~...": return "好哦...";
 
                 default: return "";
             }
