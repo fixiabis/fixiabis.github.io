@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0px;
+                padding: 10px;
+            }
+
+            textarea {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            * {
+                font-family: monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea></textarea>
+        <div></div>
+        <script>
+            function dateCalcSum(times) {
+                times = times instanceof Array ? times : times.replace(
+                    / |\t|^\n|\n$/g, ""
+                ).split("\n");
+                var result = 0;
+            
+                times.forEach(function (time) {
+                    time = time instanceof Array ? time : time.split("-");
+                    
+                    var startTime = eval(time[1].split(":").map(
+                        (v, i) => (i ? v : v * 60) | 0
+                    ).join("+"));
+                    
+                    var endTime = eval(time[0].split(":").map(
+                        (v, i) => (i ? v : v * 60) | 0
+                    ).join("+"));
+                    
+                    result += endTime - startTime;
+                });
+                
+                return result;
+            }
+
+            document.querySelector("textarea").oninput = function () {
+                document.querySelector("div").innerHTML = `time remains: ${
+                    Math.ceil((20 - (dateCalcSum(this.value) / 60)) * 100) / 100
+                }hr`;
+            }
+        </script>
+    </body>
+</html>
