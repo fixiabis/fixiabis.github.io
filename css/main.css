@@ -1,0 +1,65 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    background: #222;
+    margin: 0px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+}
+
+.square {
+    width: 450px;
+    height: 450px;
+    background: #eee;
+    position: absolute;
+    top: calc(50vh - 225px);
+    left: calc(50vw - 225px);
+    transform: rotate(45deg);
+    animation: fade-scale-in 0.25s linear;
+}
+
+.title {
+    font-size: 80px;
+    font-family: monospace;
+    color: #222;
+    position: absolute;
+    width: 350px;
+    height: 100px;
+    bottom: 0px;
+    right: 20px;
+}
+
+.square.out {
+    animation: fade-scale-out 1s linear;
+}
+
+@keyframes fade-scale-in {
+    0% {
+        opacity: 0;
+        transform: rotate(45deg) scale(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+    }
+}
+
+@keyframes fade-scale-out {
+    0% {
+        opacity: 0;
+        transform: rotate(45deg) scale(0);
+    }
+
+    25% {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: rotate(45deg) scale(2);
+    }
+}
