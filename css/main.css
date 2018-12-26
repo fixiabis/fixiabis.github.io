@@ -32,7 +32,7 @@ body {
 }
 
 .square.out {
-    animation: fade-scale-out 1s linear;
+    animation: fade-scale-out 1s cubic-bezier(0.94, 0.07, 0, 0.1);
 }
 
 @keyframes fade-scale-in {
