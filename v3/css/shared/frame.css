@@ -1,0 +1,81 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    color: #eee;
+    font-family: 'Courier New', Courier, monospace;
+    background: #222;
+    overflow-x: hidden;
+}
+
+header {
+    color: #222;
+    line-height: 30px;
+    font-size: 30px;
+    background-color: #eee;
+    padding: 15px;
+    height: 60px;
+    transition: font-size 0.5s;
+}
+
+body:target header {
+    animation: welcome 1s;
+}
+
+body header::before {
+    content: "Hello, I'm fixiabis";
+    display: inline-block;
+}
+
+body:target header::before {
+    content: "Hello, I'm";
+    animation: typing-name 1s 1s forwards;
+}
+
+body header::after {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 0.7em;
+}
+
+body:target header::after {
+    background-color: #111;
+    animation: cursor 1s 1s forwards;
+}
+
+@keyframes welcome {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes cursor {
+      0% { opacity: 0; }
+     25% { opacity: 0; }
+     26% { opacity: 1; }
+     99% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes typing-name {
+     20% { content: "Hello, I'm "; }
+     30% { content: "Hello, I'm f"; }
+     40% { content: "Hello, I'm fi"; }
+     50% { content: "Hello, I'm fix"; }
+     60% { content: "Hello, I'm fixi"; }
+     70% { content: "Hello, I'm fixia"; }
+     80% { content: "Hello, I'm fixiab"; }
+     90% { content: "Hello, I'm fixiabi"; }
+    100% { content: "Hello, I'm fixiabis"; }
+}
+
+@media screen and (max-width: 400px) {
+    header { font-size: 20px; }
+}
+
+@media screen and (max-width: 300px) {
+    header { font-size: 16px; }
+}
