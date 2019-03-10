@@ -1,2 +1,3 @@
 section { width: calc(100% - 10px); }
 article>div { width: 100%; height: 1px; margin-bottom: -1px; }
+article>div:not(:target)+section { display: none; }

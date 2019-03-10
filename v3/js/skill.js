@@ -45,6 +45,7 @@ var skillPoint = {
             ref: "https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule"
         }
     ],
+    "less": [],
     "Sass": [],
     "JavaScript": [
         {
@@ -180,6 +181,8 @@ var skillPoint = {
             ref: "http://www.typescriptlang.org/docs/handbook/mixins.html"
         }
     ],
+    "Dart": [],
+    "CoffeeScript": [],
     "WebAPI": [],
     "SVG": [],
     "NodeJS": [],
@@ -234,7 +237,7 @@ function showSkillPoint(type, list, elem, main) {
         elem.appendChild(liEl);
     }
 
-    var total = Math.round(total / list.length) || 0;
+    var total = Math.round(total / list.length) || "?";
 
     if (main) main.point = total;
     else {
