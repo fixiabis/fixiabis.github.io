@@ -198,20 +198,25 @@
 
             yield flipTo(sideB);
             yield* waitFrame(5);
-            sideA.parentNode.style.color = "";
-            yield sideA.textContent = "for development";
-            document.body.classList.remove("hide-cursor");
+            sideA.parentNode.style.color = "#ccc";
+            yield sideA.textContent = "socket.io";
 
             yield flipTo(sideA);
             yield* waitFrame(5);
+            sideB.parentNode.style.color = "";
+            yield sideB.textContent = "for development";
+            document.body.classList.remove("hide-cursor");
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
 
             for (var char of "ent") {
-                yield sideA.textContent = sideA.textContent.substr(0, sideA.textContent.length - 1);
+                yield sideB.textContent = sideB.textContent.substr(0, sideB.textContent.length - 1);
                 yield* waitFrame(3);
             }
 
             for (var char of "for developm") {
-                yield sideA.textContent = sideA.textContent.substr(0, sideA.textContent.length - 1);
+                yield sideB.textContent = sideB.textContent.substr(0, sideB.textContent.length - 1);
             }
 
             document.body.classList.add("blink-cursor");
@@ -219,7 +224,7 @@
             document.body.classList.remove("blink-cursor");
 
             for (var char of "Thank you") {
-                yield sideA.textContent += char;
+                yield sideB.textContent += char;
             }
 
             yield document.body.classList.add("blink-cursor");
