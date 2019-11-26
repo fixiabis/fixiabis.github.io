@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Self-intro</title>
+    <style>
+        body {
+            --size: 20vh;
+            box-sizing: border-box;
+            padding: 10px;
+            margin: 0px;
+            background-color: #111;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            box-sizing: border-box;
+            color: #eee;
+            background-color: #222;
+            padding: 10px;
+            width: calc(100vw - 20px);
+            height: calc(100vh - 20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--size);
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+            animation: bottom-fade-in 1s;
+        }
+
+        #side-a,
+        .flip #side-b {
+            transform: rotateX(0deg);
+        }
+
+        #side-b,
+        .flip #side-a {
+            transform: rotateX(180deg);
+        }
+
+        #side-a {
+            z-index: 1;
+        }
+
+        .cursor {
+            width: 0.5vw;
+            height: var(--size);
+            background-color: #eee;
+        }
+
+        #side-a .cursor,
+        .flip #side-b .cursor {
+            visibility: visible;
+        }
+
+        #side-b .cursor,
+        .flip #side-a .cursor {
+            visibility: hidden;
+        }
+
+        .hide-cursor .cursor {
+            visibility: hidden !important;
+        }
+
+        .blink-cursor .cursor {
+            animation: cursor-blink 0.8s infinite;
+        }
+
+        @keyframes cursor-blink {
+
+            0%,
+            50% {
+                opacity: 0;
+            }
+
+            51%,
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bottom-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+        }
+
+        @media screen and (max-width: 199px) {
+            body {
+                --size: 1vh;
+            }
+        }
+
+        @media screen and (min-width: 200px) and (max-width: 299px) {
+            body {
+                --size: 2vh;
+            }
+        }
+
+        @media screen and (min-width: 300px) and (max-width: 439px) {
+            body {
+                --size: 4vh;
+            }
+        }
+
+        @media screen and (min-width: 440px) and (max-width: 679px) {
+            body {
+                --size: 6vh;
+            }
+        }
+
+        @media screen and (min-width: 680px) {
+            body {
+                --size: 10vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="side-a" class="container">
+        <span>Hi,&nbsp;</span>
+        <div class="cursor"></div>
+    </div>
+    <div id="side-b" class="container">
+        <span> </span>
+        <div class="cursor"></div>
+    </div>
+    <script>
+        var [sideA, sideB] = ["a", "b"].map(
+            name => document.querySelector(`#side-${name} span`).childNodes[0]
+        );
+
+        function flipTo(side) {
+            document.body.classList[side == sideA ? "remove" : "add"]("flip");
+        }
+
+        function waitFrame(count) {
+            return Array(count);
+        }
+
+        var animation = function* () {
+            yield* waitFrame(10);
+            yield sideB.textContent = "I'm ";
+
+            for (var char of "I'm fixiabis") {
+                yield sideA.textContent += char;
+            }
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            yield sideA.textContent = "";
+
+            for (var char of "developer") {
+                yield sideB.textContent += char;
+            }
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
+            document.body.classList.add("hide-cursor");
+            sideB.parentNode.style.color = "#e9d54d";
+            yield sideB.textContent = "JavaScript";
+
+            for (var char of "I using...") {
+                yield sideA.textContent += char;
+            }
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            sideA.parentNode.style.color = "#007acc";
+            yield sideA.textContent = "TypeScript";
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
+            sideB.parentNode.style.color = "#61dafb";
+            yield sideB.textContent = "React";
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            sideA.parentNode.style.color = "#764abc";
+            yield sideA.textContent = "Redux";
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
+            sideB.parentNode.style.color = "#8cc03d";
+            yield sideB.textContent = "Express";
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            sideA.parentNode.style.color = "";
+            yield sideA.textContent = "for development";
+            document.body.classList.remove("hide-cursor");
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
+
+            for (var char of "ent") {
+                yield sideA.textContent = sideA.textContent.substr(0, sideA.textContent.length - 1);
+                yield* waitFrame(3);
+            }
+
+            for (var char of "for developm") {
+                yield sideA.textContent = sideA.textContent.substr(0, sideA.textContent.length - 1);
+            }
+
+            document.body.classList.add("blink-cursor");
+            yield* waitFrame(3);
+            document.body.classList.remove("blink-cursor");
+
+            for (var char of "Thank you") {
+                yield sideA.textContent += char;
+            }
+
+            yield document.body.classList.add("blink-cursor");
+        }();
+
+        setInterval(() => animation.next(), 100);
+    </script>
+</body>
+
+</html>
