@@ -9,6 +9,7 @@
     <style>
         body {
             --size: 20vh;
+            font-family: Consolas, 'Courier New', Courier, monospace;
             box-sizing: border-box;
             padding: 10px;
             margin: 0px;
@@ -193,6 +194,16 @@
 
             yield flipTo(sideA);
             yield* waitFrame(5);
+            sideB.parentNode.style.color = "#2862ea";
+            yield sideB.textContent = "CSS";
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            sideA.parentNode.style.color = "#d05991";
+            yield sideA.textContent = "SCSS";
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
             sideB.parentNode.style.color = "#8cc03d";
             yield sideB.textContent = "Express";
 
@@ -200,6 +211,16 @@
             yield* waitFrame(5);
             sideA.parentNode.style.color = "#ccc";
             yield sideA.textContent = "socket.io";
+
+            yield flipTo(sideA);
+            yield* waitFrame(5);
+            sideB.parentNode.style.color = "#7478ae";
+            yield sideB.textContent = "PHP";
+
+            yield flipTo(sideB);
+            yield* waitFrame(5);
+            sideA.parentNode.style.color = "#de8a00";
+            yield sideA.textContent = "MySQL";
 
             yield flipTo(sideA);
             yield* waitFrame(5);
@@ -231,6 +252,15 @@
         }();
 
         setInterval(() => animation.next(), 100);
+
+        `
+        fixiabis.github.io/Wildly.Arrogant
+        fixiabis.github.io/Public-Message
+        fixiabis.github.io/trianarra
+        fixiabis.github.io/relati-react/demo
+        fixiabis.github.io/brainfuck-debugger
+        relati-game.herokuapp.com
+        `
     </script>
 </body>
 
