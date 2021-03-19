@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fixiabis</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        max-width: -webkit-fill-available;
+        max-height: -webkit-fill-available;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+    <style>
+      .mtk1 {
+        color: #d4d4d4;
+      }
+
+      .mtk2 {
+        color: #1e1e1e;
+      }
+
+      .mtk3 {
+        color: #6796e6;
+      }
+
+      .mtk4 {
+        color: #6a9955;
+      }
+
+      .mtk5 {
+        color: #569cd6;
+      }
+
+      .mtk6 {
+        color: #d16969;
+      }
+
+      .mtk7 {
+        color: #d7ba7d;
+      }
+
+      .mtk8 {
+        color: #b5cea8;
+      }
+
+      .mtk9 {
+        color: #ce9178;
+      }
+
+      .mtk10 {
+        color: #646695;
+      }
+
+      .mtk11 {
+        color: #4ec9b0;
+      }
+
+      .mtk12 {
+        color: #dcdcaa;
+      }
+
+      .mtk13 {
+        color: #9cdcfe;
+      }
+
+      .mtk14 {
+        color: #000080;
+      }
+
+      .mtk15 {
+        color: #f44747;
+      }
+
+      .mtk16 {
+        color: #c586c0;
+      }
+
+      .mtk17 {
+        color: #d4d4d4;
+      }
+
+      .mtk18 {
+        color: #808080;
+      }
+
+      .mtk19 {
+        color: #b267e6;
+      }
+
+      .mtk20 {
+        color: #cd9731;
+      }
+    </style>
+    <style>
+      .card {
+        width: 90mm;
+        height: 54mm;
+        padding: 1mm;
+        font-family: monospace;
+        color: #d4d4d4;
+        background: #1e1e1e;
+        line-height: 19px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .line-numbers-container {
+        color: #858585;
+        user-select: none;
+        text-align: right;
+        width: 58px;
+        padding: 0 22.5px 0 12.5px;
+      }
+
+      .line-number {
+        display: inline-block;
+        width: 100%;
+        height: 19px;
+      }
+
+      .line-number.hidden {
+        visibility: hidden;
+      }
+
+      .line-number.active {
+        color: #c6c6c6;
+      }
+
+      code {
+        white-space: pre-wrap;
+        width: calc(100% - 58px);
+        height: 190px;
+        line-height: 19px;
+      }
+
+      .cursor {
+        display: inline-block;
+        margin-bottom: 0px;
+        width: 2px;
+        height: 19px;
+        background-color: #aeafad;
+        margin-left: -1px;
+        margin-right: -1px;
+        animation: cursor-blink 800ms infinite cubic-bezier(1, 0, 1, 0);
+        vertical-align: top;
+      }
+
+      .cigr {
+        display: inline-block;
+        width: 15.3984375px;
+        height: 19px;
+        box-shadow: 1px 0 0 0 #404040 inset;
+        vertical-align: top;
+      }
+
+      .cigr.no-line {
+        box-shadow: unset;
+      }
+
+      @keyframes cursor-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes cursor-no-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="line-numbers-container">
+        <div class="line-number active">1</div>
+        <div class="line-number hidden">2</div>
+        <div class="line-number hidden">3</div>
+        <div class="line-number hidden">4</div>
+        <div class="line-number hidden">5</div>
+        <div class="line-number hidden">6</div>
+        <div class="line-number hidden">7</div>
+        <div class="line-number hidden">8</div>
+        <div class="line-number hidden">9</div>
+        <div class="line-number hidden">10</div>
+      </div>
+      <code><div class="cursor"></div></code>
+    </div>
+
+    <script>
+      const cardEl = document.querySelector('.card');
+      const codeEl = document.querySelector('code');
+      const cursorEl = document.querySelector('.cursor');
+      const lineNumberEls = Array.from(
+        document.querySelectorAll('.line-number')
+      );
+
+      const toAnimationParams = ([
+        mode,
+        delay,
+        relPosOfCur,
+        lineNumber,
+        value,
+        className,
+      ]) => {
+        switch (mode) {
+          case 'i': {
+            const span = document.createElement('span');
+            const textContent = value;
+            Object.assign(span, { className, textContent });
+            return { mode, delay, lineNumber, relPosOfCur, span };
+          }
+
+          case 'm': {
+            const count = value;
+            return { mode, delay, lineNumber, relPosOfCur, count };
+          }
+
+          case 'r': {
+            return { mode, delay, lineNumber, relPosOfCur };
+          }
+        }
+      };
+
+      const animationParamsOfKeyframes = [
+        ['i', 100, 'b', 1, '<', 'mtk18'],
+        ...'script'.split('').map((char) => ['i', 100, 'b', 1, char, 'mtk3']),
+        ['i', 100, 'b', 1, '>', 'mtk18'],
+        ['i', 0, 'a', 1, '>', 'mtk18'],
+        ['i', 0, 'a', 1, 'script', 'mtk3'],
+        ['i', 0, 'a', 1, '<\/', 'mtk18'],
+        ['i', 300, 'b', 3, '\n'],
+        ['i', 0, 'b', 2, '', 'cigr no-line'],
+        ['i', 0, 'a', 2, '\n'],
+        ['i', 300, 'b', 4, '\n'],
+        ['i', 0, 'b', 3, '', 'cigr no-line'],
+        ['i', 300, 'b', 5, '\n'],
+        ['i', 0, 'b', 4, '', 'cigr no-line'],
+        ['m', 300, 'b', 3, 2],
+        ['r', 300, 'b', 3],
+        ...'introduceMyself'
+          .split('')
+          .map((char) => ['i', 100, 'b', 3, char, 'mtk12']),
+        ['i', 100, 'b', 3, '('],
+        ['i', 0, 'a', 3, ')'],
+        ['i', 100, 'b', 3, '{'],
+        ['i', 0, 'a', 3, '}'],
+        ['m', 200, 'a', 3, 3],
+        ['i', 300, 'b', 3, ';'],
+        ['m', 200, 'b', 3, 1],
+        ['m', 100, 'b', 3, 1],
+        ['m', 100, 'b', 3, 1],
+        ['i', 300, 'b', 7, '\n'],
+        ['i', 0, 'b', 6, '', 'cigr'],
+        ['i', 0, 'a', 4, '\n'],
+        ...'name:'.split('').map((char) => ['i', 100, 'b', 4, char, 'mtk13']),
+        ['i', 100, 'b', 4, ' '],
+        ['i', 100, 'b', 4, '"', 'mtk9'],
+        ['i', 0, 'a', 4, '"', 'mtk9'],
+        ...'YuCheng Gao'
+          .split('')
+          .map((char) => ['i', 100, 'b', 4, char, 'mtk9']),
+        ['m', 100, 'a', 4, 2],
+        ['i', 100, 'b', 4, ','],
+        ['i', 100, 'b', 8, '\n'],
+        ['i', 0, 'b', 5, '', 'cigr'],
+        ...'email:'.split('').map((char) => ['i', 100, 'b', 5, char, 'mtk13']),
+        ['i', 100, 'b', 5, ' '],
+        ['i', 100, 'b', 5, '"', 'mtk9'],
+        ['i', 0, 'a', 5, '"', 'mtk9'],
+        ...'fixiabis@gmail.com'
+          .split('')
+          .map((char) => ['i', 100, 'b', 5, char, 'mtk9']),
+        ['m', 100, 'a', 5, 2],
+        ['i', 100, 'b', 5, ','],
+        ['i', 100, 'b', 9, '\n'],
+        ['i', 0, 'b', 6, '', 'cigr'],
+        ...'profession:'
+          .split('')
+          .map((char) => ['i', 100, 'b', 6, char, 'mtk13']),
+        ['i', 100, 'b', 6, ' '],
+        ['i', 100, 'b', 6, '"', 'mtk9'],
+        ['i', 0, 'a', 6, '"', 'mtk9'],
+        ...'Web Developer'
+          .split('')
+          .map((char) => ['i', 100, 'b', 6, char, 'mtk9']),
+        ['m', 100, 'a', 6, 2],
+        ['i', 100, 'b', 6, ','],
+      ].map(toAnimationParams);
+
+      (async () => {
+        for (const animationParams of animationParamsOfKeyframes) {
+          const {
+            mode,
+            delay,
+            relPosOfCur,
+            lineNumber,
+            span,
+            count,
+          } = animationParams;
+
+          cursorEl.style.animationName = 'cursor-no-blink';
+
+          delay &&
+            (await new Promise((callback) => setTimeout(callback, delay)));
+
+          lineNumberEls.forEach((lineNumberEl) =>
+            lineNumberEl.classList.remove('active')
+          );
+
+          const lineNumberEl = lineNumberEls[lineNumber - 1];
+
+          lineNumberEl.classList.remove('hidden');
+          lineNumberEl.classList.add('active');
+
+          switch (mode) {
+            case 'i': {
+              const insert = relPosOfCur === 'b' ? insertBefore : insertAfter;
+              insert(cursorEl, span);
+              break;
+            }
+
+            case 'm': {
+              const move = relPosOfCur === 'b' ? moveBefore : moveAfter;
+              move(cursorEl, count);
+              break;
+            }
+
+            case 'r': {
+              const remove = relPosOfCur === 'b' ? removeBefore : removeAfter;
+              remove(cursorEl);
+              break;
+            }
+          }
+
+          cursorEl.style.animationName = '';
+        }
+
+        await new Promise((callback) => setTimeout(callback, 1000));
+
+        cursorEl.style.display = 'none';
+      })();
+
+      function insertBefore(refNode, newNode) {
+        refNode.parentNode.insertBefore(newNode, refNode);
+      }
+
+      function insertAfter(refNode, newNode) {
+        refNode.parentNode.insertBefore(newNode, refNode.nextSibling);
+      }
+
+      function removeBefore(refNode) {
+        refNode.parentNode.removeChild(refNode.previousSibling);
+      }
+
+      function removeAfter(refNode) {
+        refNode.parentNode.removeBefore(refNode.nextSibling);
+      }
+
+      function moveBefore(refNode, count) {
+        let node = refNode;
+
+        for (let i = 0; i < count; i++) {
+          node = node.previousSibling;
+        }
+
+        refNode.parentNode.removeChild(refNode);
+        insertBefore(node, refNode);
+      }
+
+      function moveAfter(refNode, count) {
+        let node = refNode;
+
+        for (let i = 0; i < count; i++) {
+          node = node.nextSibling;
+        }
+
+        refNode.parentNode.removeChild(refNode);
+        insertBefore(node, refNode);
+      }
+    </script>
+  </body>
+</html>
